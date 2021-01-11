@@ -1,0 +1,3491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+
+  <title>Multiple Linear Regression</title>
+  <meta name="description" content="        Multiple Linear Regression    Preliminaries As before, we need to start by:Loading the Pandas and Statsmodels librariesReading the data from a CSV fi...">
+
+  <link rel="canonical" href="http://localhost:4000/~mjbrydon/tutorials/BAinPy/10_multiple_regression.html">
+  <link rel="alternate" type="application/rss+xml" title="Basic Analytics in Python" href="http://localhost:4000/~mjbrydon/tutorials/BAinPy/feed.xml">
+
+  <meta property="og:url"         content="http://localhost:4000/~mjbrydon/tutorials/BAinPy/10_multiple_regression.html" />
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="Multiple Linear Regression" />
+<meta property="og:description" content="        Multiple Linear Regression    Preliminaries As before, we need to start by:Loading the Pandas and Statsmodels librariesReading the data from a CSV fi..." />
+<meta property="og:image"       content="" />
+
+<meta name="twitter:card" content="summary">
+
+
+  <script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/10_multiple_regression.html",
+  "headline": "Multiple Linear Regression",
+  "datePublished": "2020-09-09T12:13:08-07:00",
+  "dateModified": "2020-09-09T12:13:08-07:00",
+  "description": "        Multiple Linear Regression    Preliminaries As before, we need to start by:Loading the Pandas and Statsmodels librariesReading the data from a CSV fi...",
+  "author": {
+    "@type": "Person",
+    "name": "Michael Brydon"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Data 100 at UC Berkeley",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy",
+      "width": 60,
+      "height": 60
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy",
+    "height": 60,
+    "width": 60
+  }
+}
+
+  </script>
+  <link rel="stylesheet" href="/~mjbrydon/tutorials/BAinPy/assets/css/styles.css">
+
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#efae0a"> -->
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#233947">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="">
+
+  <!-- MathJax Config -->
+  <!-- Allow inline math using $ and automatically break long math lines -->
+<!-- (mostly) copied from nbconvert configuration -->
+<!-- https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/mathjax.tpl -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    // Center justify equations in code and markdown cells. Elsewhere
+    // we use CSS to left justify single line equations in code cells.
+    displayAlign: 'center',
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}},
+        linebreaks: { automatic: true },
+    },
+    
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML' async></script>
+
+
+  <!-- DOM updating function -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/dom-update.js"></script>
+
+  <!-- Selectors for elements on the page -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/documentSelectors.js"></script>
+
+  <!-- Define some javascript variables that will be useful in other javascript -->
+  <script>
+    const site_basename = '/~mjbrydon/tutorials/BAinPy';
+  </script>
+
+  <!-- Add AnchorJS to let headers be linked -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" async></script>
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/anchors.js" async></script>
+
+  <!-- Include Turbolinks to make page loads fast -->
+  <!-- https://github.com/turbolinks/turbolinks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js" async></script>
+  <meta name="turbolinks-cache-control" content="no-cache">
+
+  <!-- Load nbinteract for widgets -->
+  
+
+  <!-- Load Thebelab for interactive widgets -->
+  <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+
+  <!-- Load the auto-generating TOC (non-async otherwise the TOC won't load w/ turbolinks) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js" async></script>
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/tocbot.js"></script>
+
+  <!-- Google analytics -->
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-163030947-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-163030947-2');
+</script>
+
+
+
+  <!-- Clipboard copy button -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script>
+
+  <!-- Load custom website scripts -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/scripts.js" async></script>
+
+  <!-- Load custom user CSS and JS  -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/custom/custom.js" async></script>
+  <link rel="stylesheet" href="/~mjbrydon/tutorials/BAinPy/assets/custom/custom.css">
+
+  <!-- Update interact links w/ REST param, is defined in includes so we can use templates -->
+  
+
+  <!-- Lunr search code - will only be executed on the /search page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js" async></script>
+  <script>var initQuery = function() {
+  // See if we have a search box
+  var searchInput = document.querySelector('input#lunr_search');
+  if (searchInput === null) {
+    return;
+  }
+
+  // Function to parse our lunr cache
+  var idx = lunr(function () {
+    this.field('title')
+    this.field('excerpt')
+    this.field('categories')
+    this.field('tags')
+    this.ref('id')
+
+    this.pipeline.remove(lunr.trimmer)
+
+    for (var item in store) {
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        categories: store[item].categories,
+        tags: store[item].tags,
+        id: item
+      })
+    }
+  });
+
+  // Run search upon keyup
+  searchInput.addEventListener('keyup', function () {
+    var resultdiv = document.querySelector('#results');
+    var query = document.querySelector("input#lunr_search").value.toLowerCase();
+    var result =
+      idx.query(function (q) {
+        query.split(lunr.tokenizer.separator).forEach(function (term) {
+          q.term(term, { boost: 100 })
+          if(query.lastIndexOf(" ") != query.length-1){
+            q.term(term, {  usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
+          }
+          if (term != ""){
+            q.term(term, {  usePipeline: false, editDistance: 1, boost: 1 })
+          }
+        })
+      });
+
+      // Empty the results div
+      while (resultdiv.firstChild) {
+        resultdiv.removeChild(resultdiv.firstChild);
+      }
+
+    resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">'+result.length+' Result(s) found</p>');
+    for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+    	  var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
+    }
+  });
+};
+
+initFunction(initQuery);
+</script>
+
+  <!-- Load JS that depends on site variables -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/copy-button.js" async></script>
+
+  <!-- Hide cell code -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/hide-cell.js" async></script>
+
+  <!-- Printing the screen -->
+  <!-- Include nbinteract for interactive widgets -->
+<script src="https://printjs-4de6.kxcdn.com/print.min.js" async></script>
+<script>
+printContent = () => {
+    // MathJax displays a second version of any math for assistive devices etc.
+    // This prevents double-rendering in the PDF output.
+    var ignoreAssistList = [];
+    assistives = document.querySelectorAll('.MathJax_Display span.MJX_Assistive_MathML').forEach((element, index) => {
+        var thisId = 'MathJax-assistive-' + index.toString();
+        element.setAttribute('id', thisId);
+        ignoreAssistList.push(thisId)
+    });
+
+    // Print the actual content object
+    printJS({
+        printable: 'textbook_content',
+        type: 'html',
+        css: "/~mjbrydon/tutorials/BAinPy/assets/css/styles.css",
+        style: "#textbook_content {padding-top: 40px};",
+        scanStyles: false,
+        targetStyles: ["*"],
+        ignoreElements: ignoreAssistList,
+        documentTitle: ""
+    })
+};
+
+initPrint = () => {
+    document.querySelector('#interact-button-print').addEventListener('click', printContent)
+}
+
+initFunction(initPrint)
+</script>
+
+</head>
+
+  <body>
+    <!-- Include the ThebeLab config so it gets reloaded on each page -->
+    <script type="text/x-thebe-config">{
+    requestKernel: true,
+    binderOptions: {
+    repo: "YOUR-ORG/YOUR-REPO",
+    ref: "gh-pages",
+    },
+    codeMirrorConfig: {
+    theme: "abcdef",
+    mode: "python"
+    },
+    kernelOptions: {
+    kernelName: "python3",
+    path: "content"
+    }
+}
+</script>
+
+    <!-- .js-show-sidebar shows sidebar by default -->
+    <div id="js-textbook" class="c-textbook js-show-sidebar">
+      
+
+
+
+<nav id="js-sidebar" class="c-textbook__sidebar">
+  
+  <h2 class="c-sidebar__title">Basic Analytics in Python</h2>
+  <ul class="c-sidebar__chapters">
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/01_intro">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/01_intro.html"
+        >
+          
+            1.
+          
+          Introduction to Python for Data Analysis
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/02_data">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/02_data.html"
+        >
+          
+            2.
+          
+          Importing Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/03_visualization">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/03_visualization.html"
+        >
+          
+            3.
+          
+          Basic Visualization
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/04_filter">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/04_filter.html"
+        >
+          
+            4.
+          
+          Filtering Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/05_recode">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/05_recode.html"
+        >
+          
+            5.
+          
+          Recoding Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/06_t-test">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/06_t-test.html"
+        >
+          
+            6.
+          
+          Gap Analysis Using t-Tests
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/07_contingency">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/07_contingency.html"
+        >
+          
+            7.
+          
+          Gap Analysis with Categorical Variables
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/08_correlation">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/08_correlation.html"
+        >
+          
+            8.
+          
+          Correlation and Scatterplots
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/09_regression">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/09_regression.html"
+        >
+          
+            9.
+          
+          Simple Linear Regression
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/10_multiple_regression">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/10_multiple_regression.html"
+        >
+          
+            10.
+          
+          Multiple Linear Regression
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+  </ul>
+  <p class="sidebar_footer"></p>
+</nav>
+
+      
+      <div class="c-topbar" id="top-navbar">
+  <!-- We show the sidebar by default so we use .is-active -->
+  <div class="c-topbar__buttons">
+    <button
+      id="js-sidebar-toggle"
+      class="hamburger hamburger--arrowalt is-active"
+    >
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+    <div class="buttons">
+<div class="download-buttons-dropdown">
+    <button id="dropdown-button-trigger" class="interact-button"><img src="/~mjbrydon/tutorials/BAinPy/assets/images/download-solid.svg" alt="Download" /></button>
+    <div class="download-buttons">
+        <a href="/~mjbrydon/tutorials/BAinPy/content/10_multiple_regression.ipynb" download>
+        <button id="interact-button-download" class="interact-button">.ipynb</button>
+        </a>
+        
+        <a id="interact-button-print"><button id="interact-button-download" class="interact-button">.pdf</button></a>
+    </div>
+</div>
+
+
+  
+  
+  
+  
+
+
+</div>
+
+  </div>
+  <!-- Empty sidebar placeholder that we'll auto-fill with javascript -->
+  <aside class="sidebar__right">
+    <header><h4 class="nav__title"><img src="/~mjbrydon/tutorials/BAinPy/assets/images/list-solid.svg" alt="Search" />   On this page</h4></header>
+    <nav class="onthispage">
+    </nav>
+  </aside>
+  <a href="/~mjbrydon/tutorials/BAinPy/search.html" class="topbar-right-button" id="search-button">
+    <img src="/~mjbrydon/tutorials/BAinPy/assets/images/search-solid.svg" alt="Search" />
+  </a>
+</div>
+
+      <main class="c-textbook__page" tabindex="-1">
+            <div class="c-textbook__content" id="textbook_content">
+                  <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Multiple Linear Regression</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Preliminaries">Preliminaries<a class="anchor-link" href="#Preliminaries"> </a></h2><p>As before, we need to start by:</p>
+<ol>
+<li>Loading the Pandas and Statsmodels libraries</li>
+<li>Reading the data from a CSV file</li>
+<li>Fixing the column names using Panda's <code>rename()</code> method</li>
+<li>Converting the "AirEntrain" column to a categorical variable</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+
+<span class="n">con</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;Data/ConcreteStrength.csv&#39;</span><span class="p">)</span>
+<span class="n">con</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Fly ash&#39;</span><span class="p">:</span> <span class="s1">&#39;FlyAsh&#39;</span><span class="p">,</span> <span class="s1">&#39;Coarse Aggr.&#39;</span><span class="p">:</span> <span class="s2">&quot;CoarseAgg&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;Fine Aggr.&#39;</span><span class="p">:</span> <span class="s1">&#39;FineAgg&#39;</span><span class="p">,</span> <span class="s1">&#39;Air Entrainment&#39;</span><span class="p">:</span> <span class="s1">&#39;AirEntrain&#39;</span><span class="p">,</span> 
+                    <span class="s1">&#39;Compressive Strength (28-day)(Mpa)&#39;</span><span class="p">:</span> <span class="s1">&#39;Strength&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">con</span><span class="p">[</span><span class="s1">&#39;AirEntrain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">con</span><span class="p">[</span><span class="s1">&#39;AirEntrain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<span class="n">con</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>No</th>
+      <th>Cement</th>
+      <th>Slag</th>
+      <th>FlyAsh</th>
+      <th>Water</th>
+      <th>SP</th>
+      <th>CoarseAgg</th>
+      <th>FineAgg</th>
+      <th>AirEntrain</th>
+      <th>Strength</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>273.0</td>
+      <td>82.0</td>
+      <td>105.0</td>
+      <td>210.0</td>
+      <td>9.0</td>
+      <td>904.0</td>
+      <td>680.0</td>
+      <td>No</td>
+      <td>34.990</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>163.0</td>
+      <td>149.0</td>
+      <td>191.0</td>
+      <td>180.0</td>
+      <td>12.0</td>
+      <td>843.0</td>
+      <td>746.0</td>
+      <td>Yes</td>
+      <td>32.272</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>162.0</td>
+      <td>148.0</td>
+      <td>191.0</td>
+      <td>179.0</td>
+      <td>16.0</td>
+      <td>840.0</td>
+      <td>743.0</td>
+      <td>Yes</td>
+      <td>35.450</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I then define to separate data frames:</p>
+<ol>
+<li><em>Y</em> to hold my response variable (the single column "Strength")</li>
+<li><em>X</em> to hold my explanatory variables</li>
+</ol>
+<p>Note that I have excluded "AirEntrain" at this point because it is categorical.  As we have seen in Excel, SAS Enterprise Guide, and R, including categorical variables in a linear regression requires some additional work.</p>
+<p>I complete my <em>X</em> matrix by running the Statsmodels <code>add_constant()</code> method, as explained in the tutorial on <a href="regression.html">linear regression</a>.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">con</span><span class="p">[</span><span class="s1">&#39;Strength&#39;</span><span class="p">]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">con</span><span class="p">[[</span><span class="s1">&#39;No&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Cement&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Slag&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;FlyAsh&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Water&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;SP&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;CoarseAgg&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;FineAgg&#39;</span><span class="p">]]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Kitchen-sink-model">Kitchen sink model<a class="anchor-link" href="#Kitchen-sink-model"> </a></h2><p>Our tradition is to start with a "kitchen sink" model, which includes all our (numerical) explanatory variables. The Statsmodels OLS output gives us some warnings at the bottom of the output.  We can ignore these at this early stage of the modeling process.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ks</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+<span class="n">ks_res</span> <span class="o">=</span><span class="n">ks</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">ks_res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>        <td>Strength</td>     <th>  R-squared:         </th> <td>   0.827</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.812</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   56.21</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 07 Apr 2020</td> <th>  Prob (F-statistic):</th> <td>1.68e-32</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>10:46:23</td>     <th>  Log-Likelihood:    </th> <td> -284.49</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   103</td>      <th>  AIC:               </th> <td>   587.0</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    94</td>      <th>  BIC:               </th> <td>   610.7</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     8</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+      <td></td>         <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th>     <td>  115.2834</td> <td>  142.786</td> <td>    0.807</td> <td> 0.421</td> <td> -168.222</td> <td>  398.789</td>
+</tr>
+<tr>
+  <th>No</th>        <td>   -0.0077</td> <td>    0.021</td> <td>   -0.372</td> <td> 0.711</td> <td>   -0.049</td> <td>    0.033</td>
+</tr>
+<tr>
+  <th>Cement</th>    <td>    0.0826</td> <td>    0.047</td> <td>    1.758</td> <td> 0.082</td> <td>   -0.011</td> <td>    0.176</td>
+</tr>
+<tr>
+  <th>Slag</th>      <td>   -0.0225</td> <td>    0.065</td> <td>   -0.346</td> <td> 0.730</td> <td>   -0.152</td> <td>    0.107</td>
+</tr>
+<tr>
+  <th>FlyAsh</th>    <td>    0.0668</td> <td>    0.048</td> <td>    1.380</td> <td> 0.171</td> <td>   -0.029</td> <td>    0.163</td>
+</tr>
+<tr>
+  <th>Water</th>     <td>   -0.2165</td> <td>    0.142</td> <td>   -1.520</td> <td> 0.132</td> <td>   -0.499</td> <td>    0.066</td>
+</tr>
+<tr>
+  <th>SP</th>        <td>    0.2518</td> <td>    0.213</td> <td>    1.181</td> <td> 0.241</td> <td>   -0.172</td> <td>    0.675</td>
+</tr>
+<tr>
+  <th>CoarseAgg</th> <td>   -0.0479</td> <td>    0.056</td> <td>   -0.857</td> <td> 0.393</td> <td>   -0.159</td> <td>    0.063</td>
+</tr>
+<tr>
+  <th>FineAgg</th>   <td>   -0.0356</td> <td>    0.057</td> <td>   -0.622</td> <td> 0.536</td> <td>   -0.149</td> <td>    0.078</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 2.168</td> <th>  Durbin-Watson:     </th> <td>   1.715</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.338</td> <th>  Jarque-Bera (JB):  </th> <td>   2.183</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td>-0.309</td> <th>  Prob(JB):          </th> <td>   0.336</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 2.644</td> <th>  Cond. No.          </th> <td>4.36e+05</td>
+</tr>
+</table><br/><br/>Warnings:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.<br/>[2] The condition number is large, 4.36e+05. This might indicate that there are<br/>strong multicollinearity or other numerical problems.
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Categorical-explanatory-variables">Categorical explanatory variables<a class="anchor-link" href="#Categorical-explanatory-variables"> </a></h2><p>Recall how we have dealt with categorical explanatory variables to this point:</p>
+<ol>
+<li><strong>Excel</strong>: We used IF statements and other tricks to create <em>n</em>-1 new columns in the spreadsheet (where <em>n</em> is the number of values in the categorical variable)</li>
+<li><strong>SAS Enterprise Guide</strong>: We used the recoding functionality in the query builder to add <em>n</em>-1 new columns to the data set</li>
+<li><strong>R</strong>: We converted the variable to a <em>factor</em> data type and let R construct the <em>n</em>-1 dummy columns behind the scenes</li>
+</ol>
+<p>In Python, we can use either the manual approach (create a matrix of dummy variables ourselves) or the automatic approach (let the algorithm sort it out behind the scenes).  I am partial to the manual approach because dealing intelligently with categorical variables in real-world data <em>almost always</em> involves significant work.  Specifically: we typically need to change the granularity of the variable to provide more generalizable results.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Create-a-matrix-of-dummy-variables">Create a matrix of dummy variables<a class="anchor-link" href="#Create-a-matrix-of-dummy-variables"> </a></h3><p>When I say the "manual" approach in Python, I actually mean "quite a bit less manual" than Excel.  Many different libraries in Python provide many different routines for encoding categorical variables.  All of these routines bypass the drudgery of writing IF statements to map from categorical values to (0, 1) values.  Here we will use Pandas's aptly-named <code>get_dummies()</code> method.</p>
+<p>In this approach, we pass <code>get_dummies()</code> a column in a data frame and it creates a full matrix of zero-one values.  In other words, it gives us a matrix with 103 rows (because we have 103 rows in the "Concrete Strength" data set and two columns (because the "AirEntrain" variable has two values: Yes and No).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">AirEntrain_d</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">con</span><span class="p">[</span><span class="s1">&#39;AirEntrain&#39;</span><span class="p">])</span>
+<span class="n">AirEntrain_d</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>No</th>
+      <th>Yes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>100</th>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>101</th>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>102</th>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>103 rows × 2 columns</p>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The "Yes" and "No" column headings are problematic, especially if we have to convert many categorical variables with Yes/No values.  Accordingly, I need to make some changes to the default dummy matrix:</p>
+<ol>
+<li>I want to use AirEntrain=No as my baseline for the dummy variable.  As such, I need to drop the "No" column from the matrix before passing it to the regression.</li>
+<li>I like to embed my choice of baseline into the the dummy column names. This makes it easier to interpret the regression coefficients</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">AirEntrain_d</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;No&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">AirEntrain_d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Yes&#39;</span><span class="p">:</span> <span class="s1">&#39;AirEntrain_Yes&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">AirEntrain_d</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AirEntrain_Yes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="A-slightly-more-automated-version">A slightly more automated version<a class="anchor-link" href="#A-slightly-more-automated-version"> </a></h3><p>Not surprisingly, we can cut down the number of steps in this process by passing <code>get_dummies()</code> additional arguments:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">AirEntrain_d</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">con</span><span class="p">[</span><span class="s1">&#39;AirEntrain&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;AirEntrain&#39;</span><span class="p">,</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">AirEntrain_d</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AirEntrain_Yes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Adding-the-dummy-columns-to-the-existing-X-matrix">Adding the dummy columns to the existing <em>X</em> matrix<a class="anchor-link" href="#Adding-the-dummy-columns-to-the-existing-X-matrix"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fullX</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">AirEntrain_d</span><span class="p">[</span><span class="s1">&#39;AirEntrain_Yes&#39;</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fullX</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>const</th>
+      <th>No</th>
+      <th>Cement</th>
+      <th>Slag</th>
+      <th>FlyAsh</th>
+      <th>Water</th>
+      <th>SP</th>
+      <th>CoarseAgg</th>
+      <th>FineAgg</th>
+      <th>AirEntrain_Yes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.0</td>
+      <td>1</td>
+      <td>273.0</td>
+      <td>82.0</td>
+      <td>105.0</td>
+      <td>210.0</td>
+      <td>9.0</td>
+      <td>904.0</td>
+      <td>680.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.0</td>
+      <td>2</td>
+      <td>163.0</td>
+      <td>149.0</td>
+      <td>191.0</td>
+      <td>180.0</td>
+      <td>12.0</td>
+      <td>843.0</td>
+      <td>746.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.0</td>
+      <td>3</td>
+      <td>162.0</td>
+      <td>148.0</td>
+      <td>191.0</td>
+      <td>179.0</td>
+      <td>16.0</td>
+      <td>840.0</td>
+      <td>743.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1.0</td>
+      <td>4</td>
+      <td>162.0</td>
+      <td>148.0</td>
+      <td>190.0</td>
+      <td>179.0</td>
+      <td>19.0</td>
+      <td>838.0</td>
+      <td>741.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.0</td>
+      <td>5</td>
+      <td>154.0</td>
+      <td>112.0</td>
+      <td>144.0</td>
+      <td>220.0</td>
+      <td>10.0</td>
+      <td>923.0</td>
+      <td>658.0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Running-the-full-regression">Running the full regression<a class="anchor-link" href="#Running-the-full-regression"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ks2</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">fullX</span><span class="p">)</span>
+<span class="n">ks2_res</span> <span class="o">=</span> <span class="n">ks2</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">ks2_res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>        <td>Strength</td>     <th>  R-squared:         </th> <td>   0.924</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.916</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   125.1</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 07 Apr 2020</td> <th>  Prob (F-statistic):</th> <td>5.83e-48</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>10:46:23</td>     <th>  Log-Likelihood:    </th> <td> -242.38</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   103</td>      <th>  AIC:               </th> <td>   504.8</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    93</td>      <th>  BIC:               </th> <td>   531.1</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     9</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+         <td></td>           <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th>          <td>   41.5005</td> <td>   95.617</td> <td>    0.434</td> <td> 0.665</td> <td> -148.375</td> <td>  231.376</td>
+</tr>
+<tr>
+  <th>No</th>             <td>   -0.0173</td> <td>    0.014</td> <td>   -1.251</td> <td> 0.214</td> <td>   -0.045</td> <td>    0.010</td>
+</tr>
+<tr>
+  <th>Cement</th>         <td>    0.0962</td> <td>    0.031</td> <td>    3.063</td> <td> 0.003</td> <td>    0.034</td> <td>    0.159</td>
+</tr>
+<tr>
+  <th>Slag</th>           <td>    0.0157</td> <td>    0.044</td> <td>    0.359</td> <td> 0.720</td> <td>   -0.071</td> <td>    0.102</td>
+</tr>
+<tr>
+  <th>FlyAsh</th>         <td>    0.0869</td> <td>    0.032</td> <td>    2.684</td> <td> 0.009</td> <td>    0.023</td> <td>    0.151</td>
+</tr>
+<tr>
+  <th>Water</th>          <td>   -0.1380</td> <td>    0.095</td> <td>   -1.446</td> <td> 0.151</td> <td>   -0.328</td> <td>    0.051</td>
+</tr>
+<tr>
+  <th>SP</th>             <td>    0.1902</td> <td>    0.143</td> <td>    1.334</td> <td> 0.186</td> <td>   -0.093</td> <td>    0.473</td>
+</tr>
+<tr>
+  <th>CoarseAgg</th>      <td>   -0.0160</td> <td>    0.037</td> <td>   -0.428</td> <td> 0.669</td> <td>   -0.090</td> <td>    0.058</td>
+</tr>
+<tr>
+  <th>FineAgg</th>        <td>   -0.0021</td> <td>    0.038</td> <td>   -0.053</td> <td> 0.957</td> <td>   -0.078</td> <td>    0.074</td>
+</tr>
+<tr>
+  <th>AirEntrain_Yes</th> <td>   -6.0683</td> <td>    0.559</td> <td>  -10.848</td> <td> 0.000</td> <td>   -7.179</td> <td>   -4.957</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 4.217</td> <th>  Durbin-Watson:     </th> <td>   1.637</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.121</td> <th>  Jarque-Bera (JB):  </th> <td>   3.635</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.351</td> <th>  Prob(JB):          </th> <td>   0.162</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 3.594</td> <th>  Cond. No.          </th> <td>4.37e+05</td>
+</tr>
+</table><br/><br/>Warnings:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.<br/>[2] The condition number is large, 4.37e+05. This might indicate that there are<br/>strong multicollinearity or other numerical problems.
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Using-R-like-formulas">Using R-like formulas<a class="anchor-link" href="#Using-R-like-formulas"> </a></h2><p>As I mentioned previously, R was used in statistics long before Python was popular.  As a consequence, some of the data science libraries for Python mimic the R way of doing thing.  This makes it much easier for people who know R to transition to Python.  If, however, you do not know R, it just adds a lot of confusion.</p>
+<p>Having said this, formula notation in R turns out to be pretty handy.  Instead of defining separate <em>Y</em> and <em>X</em> matrices, you simply pass R a formula of the form "Y ~ X1, X2, ... Xn" and it takes care of the rest.  It turns out that Statsmodels includes a whole library for doing things the R way.  Two things to know:</p>
+<ol>
+<li>You have to import the statsmodels.formula.api library instead of (or, more typically, in addition to) the statsmodels.api library</li>
+<li>The method names in the "formula" api are lowercase (e.g., <code>ols()</code> instead of <code>OLS()</code></li>
+</ol>
+<p>Yes, this is confusing, but you can do things like this:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">statsmodels.formula.api</span> <span class="k">as</span> <span class="nn">smf</span>
+<span class="n">ksf</span> <span class="o">=</span>  <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39; Strength ~ No + Cement + Slag + Water + CoarseAgg + FlyAsh + SP + FineAgg + AirEntrain&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">con</span><span class="p">)</span>
+<span class="n">ksf_res</span> <span class="o">=</span> <span class="n">ksf</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">ksf_res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>        <td>Strength</td>     <th>  R-squared:         </th> <td>   0.924</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.916</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   125.1</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 07 Apr 2020</td> <th>  Prob (F-statistic):</th> <td>5.83e-48</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>10:46:23</td>     <th>  Log-Likelihood:    </th> <td> -242.38</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   103</td>      <th>  AIC:               </th> <td>   504.8</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    93</td>      <th>  BIC:               </th> <td>   531.1</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     9</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+          <td></td>             <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>Intercept</th>         <td>   41.5005</td> <td>   95.617</td> <td>    0.434</td> <td> 0.665</td> <td> -148.375</td> <td>  231.376</td>
+</tr>
+<tr>
+  <th>AirEntrain[T.Yes]</th> <td>   -6.0683</td> <td>    0.559</td> <td>  -10.848</td> <td> 0.000</td> <td>   -7.179</td> <td>   -4.957</td>
+</tr>
+<tr>
+  <th>No</th>                <td>   -0.0173</td> <td>    0.014</td> <td>   -1.251</td> <td> 0.214</td> <td>   -0.045</td> <td>    0.010</td>
+</tr>
+<tr>
+  <th>Cement</th>            <td>    0.0962</td> <td>    0.031</td> <td>    3.063</td> <td> 0.003</td> <td>    0.034</td> <td>    0.159</td>
+</tr>
+<tr>
+  <th>Slag</th>              <td>    0.0157</td> <td>    0.044</td> <td>    0.359</td> <td> 0.720</td> <td>   -0.071</td> <td>    0.102</td>
+</tr>
+<tr>
+  <th>Water</th>             <td>   -0.1380</td> <td>    0.095</td> <td>   -1.446</td> <td> 0.151</td> <td>   -0.328</td> <td>    0.051</td>
+</tr>
+<tr>
+  <th>CoarseAgg</th>         <td>   -0.0160</td> <td>    0.037</td> <td>   -0.428</td> <td> 0.669</td> <td>   -0.090</td> <td>    0.058</td>
+</tr>
+<tr>
+  <th>FlyAsh</th>            <td>    0.0869</td> <td>    0.032</td> <td>    2.684</td> <td> 0.009</td> <td>    0.023</td> <td>    0.151</td>
+</tr>
+<tr>
+  <th>SP</th>                <td>    0.1902</td> <td>    0.143</td> <td>    1.334</td> <td> 0.186</td> <td>   -0.093</td> <td>    0.473</td>
+</tr>
+<tr>
+  <th>FineAgg</th>           <td>   -0.0021</td> <td>    0.038</td> <td>   -0.053</td> <td> 0.957</td> <td>   -0.078</td> <td>    0.074</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 4.217</td> <th>  Durbin-Watson:     </th> <td>   1.637</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.121</td> <th>  Jarque-Bera (JB):  </th> <td>   3.635</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.351</td> <th>  Prob(JB):          </th> <td>   0.162</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 3.594</td> <th>  Cond. No.          </th> <td>4.37e+05</td>
+</tr>
+</table><br/><br/>Warnings:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.<br/>[2] The condition number is large, 4.37e+05. This might indicate that there are<br/>strong multicollinearity or other numerical problems.
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is exactly the same formula we used in R for the kitchen sink model.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Checking-for-colinearity">Checking for colinearity<a class="anchor-link" href="#Checking-for-colinearity"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Scatterplot-matrix">Scatterplot matrix<a class="anchor-link" href="#Scatterplot-matrix"> </a></h3><p>We can run a scatterplot matrix on our orginal <em>X</em> matrix using Seaborn's handy <code>pairplot()</code> method. A nice feature of this presentation is a histogram for each variable. <strong>Note</strong> that this may take a few seconds to generate so you  have to be patient.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">X</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="images/10_multiple_regression_22_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Restricting-variables-in-the-scatterplot-matrix">Restricting variables in the scatterplot matrix<a class="anchor-link" href="#Restricting-variables-in-the-scatterplot-matrix"> </a></h3><p>With wide data sets (many columns), the scatterplots become unreadable.  Thus, it is often better to restrict the variables in the scatterplot matrix to a named set in order to maximize readability.  Here I have excluded the constant, response variable, and all dummy columns.</p>
+<p>A few things that catch my eye in the scatterplot matrix:</p>
+<ol>
+<li>The "No" variable (experiment number) does not appear to be correlated with any other variable.  That is good news&mdash;we should not expect it to in a well-run experiment.</li>
+<li>There is some linearity and other weirdness in the relationships between "FlyAsh", "Slag", and "Cement". This suggests problems with the experimental design. Unfortunately, these problems cannot be fixed in the data analysis stage.</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">X</span><span class="p">[[</span><span class="s1">&#39;No&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Cement&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Slag&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;FlyAsh&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Water&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;SP&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;CoarseAgg&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;FineAgg&#39;</span><span class="p">]]);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="images/10_multiple_regression_24_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Correlation-matrix">Correlation matrix<a class="anchor-link" href="#Correlation-matrix"> </a></h3><p>If the scatterplot matrix remain too hard to read, you can always revert to a simple correlation matrix.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">round</span><span class="p">(</span><span class="n">con</span><span class="o">.</span><span class="n">corr</span><span class="p">(),</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>No</th>
+      <th>Cement</th>
+      <th>Slag</th>
+      <th>FlyAsh</th>
+      <th>Water</th>
+      <th>SP</th>
+      <th>CoarseAgg</th>
+      <th>FineAgg</th>
+      <th>Strength</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>No</th>
+      <td>1.00</td>
+      <td>-0.03</td>
+      <td>-0.08</td>
+      <td>0.34</td>
+      <td>-0.14</td>
+      <td>-0.33</td>
+      <td>0.22</td>
+      <td>-0.31</td>
+      <td>0.19</td>
+    </tr>
+    <tr>
+      <th>Cement</th>
+      <td>-0.03</td>
+      <td>1.00</td>
+      <td>-0.24</td>
+      <td>-0.49</td>
+      <td>0.22</td>
+      <td>-0.11</td>
+      <td>-0.31</td>
+      <td>0.06</td>
+      <td>0.46</td>
+    </tr>
+    <tr>
+      <th>Slag</th>
+      <td>-0.08</td>
+      <td>-0.24</td>
+      <td>1.00</td>
+      <td>-0.32</td>
+      <td>-0.03</td>
+      <td>0.31</td>
+      <td>-0.22</td>
+      <td>-0.18</td>
+      <td>-0.33</td>
+    </tr>
+    <tr>
+      <th>FlyAsh</th>
+      <td>0.34</td>
+      <td>-0.49</td>
+      <td>-0.32</td>
+      <td>1.00</td>
+      <td>-0.24</td>
+      <td>-0.14</td>
+      <td>0.17</td>
+      <td>-0.28</td>
+      <td>0.41</td>
+    </tr>
+    <tr>
+      <th>Water</th>
+      <td>-0.14</td>
+      <td>0.22</td>
+      <td>-0.03</td>
+      <td>-0.24</td>
+      <td>1.00</td>
+      <td>-0.16</td>
+      <td>-0.60</td>
+      <td>0.11</td>
+      <td>-0.22</td>
+    </tr>
+    <tr>
+      <th>SP</th>
+      <td>-0.33</td>
+      <td>-0.11</td>
+      <td>0.31</td>
+      <td>-0.14</td>
+      <td>-0.16</td>
+      <td>1.00</td>
+      <td>-0.10</td>
+      <td>0.06</td>
+      <td>-0.02</td>
+    </tr>
+    <tr>
+      <th>CoarseAgg</th>
+      <td>0.22</td>
+      <td>-0.31</td>
+      <td>-0.22</td>
+      <td>0.17</td>
+      <td>-0.60</td>
+      <td>-0.10</td>
+      <td>1.00</td>
+      <td>-0.49</td>
+      <td>-0.15</td>
+    </tr>
+    <tr>
+      <th>FineAgg</th>
+      <td>-0.31</td>
+      <td>0.06</td>
+      <td>-0.18</td>
+      <td>-0.28</td>
+      <td>0.11</td>
+      <td>0.06</td>
+      <td>-0.49</td>
+      <td>1.00</td>
+      <td>-0.17</td>
+    </tr>
+    <tr>
+      <th>Strength</th>
+      <td>0.19</td>
+      <td>0.46</td>
+      <td>-0.33</td>
+      <td>0.41</td>
+      <td>-0.22</td>
+      <td>-0.02</td>
+      <td>-0.15</td>
+      <td>-0.17</td>
+      <td>1.00</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Model-refinement">Model refinement<a class="anchor-link" href="#Model-refinement"> </a></h2><p>The kitchen sink model is unlikely to be the best model.  At the very least, we need to remove variables that should not be in the model for <strong>methodological</strong> reasons, such as collinearity.  Then, depending on our philosophical view on such things, we can go into data mining mode and attempt to generate the "best" model by removing or adding explanatory variables. Two clarifications:</p>
+<ol>
+<li>The <strong>best</strong> model is typically defined in terms of the trade-off between goodness of fit (e.g., $R^2$) and model complexity (the number of explanatory variables).  This trade-off provides the rationale for the <em>adjusted</em> $R^2$ measure. Given two models with similar explanatory power, the one with the fewest explanatory variables is deemed better.  </li>
+<li><strong>Data mining mode</strong> means we suspend our knowledge about the underlying domain and instead focus on technical measures of explanatory power. In this mode, we keep our theories about cause and effect to ourselves: If the measure indicates a variable has explanatory power, we leave it in the model; if the measure indicates the variable has low explanatory power, we take it out of the model. Many different heuristic measures of explanatory power exist, including the <em>p</em>-value of the coefficient and the more sophistical measures (AIC, Mallows Cp) used by SAS and R.</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Manual-stepwise-refinement">Manual stepwise refinement<a class="anchor-link" href="#Manual-stepwise-refinement"> </a></h3><p>When we did manual stepwise refinement in Excel, our heuristic was to start with the kitchen sink model and remove the variable with the highest <em>p</em>-value (probability of zero slope).</p>
+<p>If we scroll up to the results of the kitchen sink model, we see that the variable with the highest <em>p</em>-value is "FineAgg". If we are using the matrix version of the <code>OLS()</code> method, we can drop the column from the <em>X</em> matrix.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X1</span> <span class="o">=</span> <span class="n">fullX</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;FineAgg&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">mod1</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X1</span><span class="p">)</span>
+<span class="n">mod1_res</span> <span class="o">=</span> <span class="n">mod1</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">mod1_res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>        <td>Strength</td>     <th>  R-squared:         </th> <td>   0.924</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.917</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   142.2</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 07 Apr 2020</td> <th>  Prob (F-statistic):</th> <td>4.73e-49</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>10:46:58</td>     <th>  Log-Likelihood:    </th> <td> -242.38</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   103</td>      <th>  AIC:               </th> <td>   502.8</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    94</td>      <th>  BIC:               </th> <td>   526.5</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     8</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+         <td></td>           <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th>          <td>   36.4097</td> <td>    8.674</td> <td>    4.197</td> <td> 0.000</td> <td>   19.186</td> <td>   53.633</td>
+</tr>
+<tr>
+  <th>No</th>             <td>   -0.0178</td> <td>    0.011</td> <td>   -1.674</td> <td> 0.097</td> <td>   -0.039</td> <td>    0.003</td>
+</tr>
+<tr>
+  <th>Cement</th>         <td>    0.0978</td> <td>    0.005</td> <td>   18.070</td> <td> 0.000</td> <td>    0.087</td> <td>    0.109</td>
+</tr>
+<tr>
+  <th>Slag</th>           <td>    0.0180</td> <td>    0.006</td> <td>    2.819</td> <td> 0.006</td> <td>    0.005</td> <td>    0.031</td>
+</tr>
+<tr>
+  <th>FlyAsh</th>         <td>    0.0887</td> <td>    0.005</td> <td>   17.367</td> <td> 0.000</td> <td>    0.079</td> <td>    0.099</td>
+</tr>
+<tr>
+  <th>Water</th>          <td>   -0.1330</td> <td>    0.019</td> <td>   -7.131</td> <td> 0.000</td> <td>   -0.170</td> <td>   -0.096</td>
+</tr>
+<tr>
+  <th>SP</th>             <td>    0.1950</td> <td>    0.109</td> <td>    1.791</td> <td> 0.077</td> <td>   -0.021</td> <td>    0.411</td>
+</tr>
+<tr>
+  <th>CoarseAgg</th>      <td>   -0.0141</td> <td>    0.005</td> <td>   -2.964</td> <td> 0.004</td> <td>   -0.023</td> <td>   -0.005</td>
+</tr>
+<tr>
+  <th>AirEntrain_Yes</th> <td>   -6.0707</td> <td>    0.555</td> <td>  -10.946</td> <td> 0.000</td> <td>   -7.172</td> <td>   -4.970</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 4.255</td> <th>  Durbin-Watson:     </th> <td>   1.637</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.119</td> <th>  Jarque-Bera (JB):  </th> <td>   3.680</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.352</td> <th>  Prob(JB):          </th> <td>   0.159</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 3.601</td> <th>  Cond. No.          </th> <td>3.15e+04</td>
+</tr>
+</table><br/><br/>Warnings:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.<br/>[2] The condition number is large, 3.15e+04. This might indicate that there are<br/>strong multicollinearity or other numerical problems.
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can continue this refinement until all the explanatory variables are significant at some level.  This backstep approach is the simplest method of model refinement.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Manual-refinement-in-formula-mode">Manual refinement in formula mode<a class="anchor-link" href="#Manual-refinement-in-formula-mode"> </a></h3><p>Dropping variables in formula mode is a simple matter of removing them from the R-like formula.  Here I have removed "FineAgg":</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mod1f</span> <span class="o">=</span>  <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39; Strength ~ No + Cement + Slag + Water + CoarseAgg + FlyAsh + SP + AirEntrain&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">con</span><span class="p">)</span>
+<span class="n">mod1f_res</span> <span class="o">=</span> <span class="n">mod1f</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">mod1f_res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>        <td>Strength</td>     <th>  R-squared:         </th> <td>   0.924</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.917</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   142.2</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 07 Apr 2020</td> <th>  Prob (F-statistic):</th> <td>4.73e-49</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>10:46:59</td>     <th>  Log-Likelihood:    </th> <td> -242.38</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   103</td>      <th>  AIC:               </th> <td>   502.8</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    94</td>      <th>  BIC:               </th> <td>   526.5</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     8</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+          <td></td>             <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>Intercept</th>         <td>   36.4097</td> <td>    8.674</td> <td>    4.197</td> <td> 0.000</td> <td>   19.186</td> <td>   53.633</td>
+</tr>
+<tr>
+  <th>AirEntrain[T.Yes]</th> <td>   -6.0707</td> <td>    0.555</td> <td>  -10.946</td> <td> 0.000</td> <td>   -7.172</td> <td>   -4.970</td>
+</tr>
+<tr>
+  <th>No</th>                <td>   -0.0178</td> <td>    0.011</td> <td>   -1.674</td> <td> 0.097</td> <td>   -0.039</td> <td>    0.003</td>
+</tr>
+<tr>
+  <th>Cement</th>            <td>    0.0978</td> <td>    0.005</td> <td>   18.070</td> <td> 0.000</td> <td>    0.087</td> <td>    0.109</td>
+</tr>
+<tr>
+  <th>Slag</th>              <td>    0.0180</td> <td>    0.006</td> <td>    2.819</td> <td> 0.006</td> <td>    0.005</td> <td>    0.031</td>
+</tr>
+<tr>
+  <th>Water</th>             <td>   -0.1330</td> <td>    0.019</td> <td>   -7.131</td> <td> 0.000</td> <td>   -0.170</td> <td>   -0.096</td>
+</tr>
+<tr>
+  <th>CoarseAgg</th>         <td>   -0.0141</td> <td>    0.005</td> <td>   -2.964</td> <td> 0.004</td> <td>   -0.023</td> <td>   -0.005</td>
+</tr>
+<tr>
+  <th>FlyAsh</th>            <td>    0.0887</td> <td>    0.005</td> <td>   17.367</td> <td> 0.000</td> <td>    0.079</td> <td>    0.099</td>
+</tr>
+<tr>
+  <th>SP</th>                <td>    0.1950</td> <td>    0.109</td> <td>    1.791</td> <td> 0.077</td> <td>   -0.021</td> <td>    0.411</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 4.255</td> <th>  Durbin-Watson:     </th> <td>   1.637</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.119</td> <th>  Jarque-Bera (JB):  </th> <td>   3.680</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.352</td> <th>  Prob(JB):          </th> <td>   0.159</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 3.601</td> <th>  Cond. No.          </th> <td>3.15e+04</td>
+</tr>
+</table><br/><br/>Warnings:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.<br/>[2] The condition number is large, 3.15e+04. This might indicate that there are<br/>strong multicollinearity or other numerical problems.
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Automated-stepwise-refinement">Automated stepwise refinement<a class="anchor-link" href="#Automated-stepwise-refinement"> </a></h2><p>What we are attempting to replicate in automated stepwise refinement is the "model selection method" feature of SAS Enterprise Guide.  Recall that SAS provides several algorithms for determining which explanatory variables to include in the final regression model and which to exclude.</p>
+<p>Unfortunately for us, model refinement is conspicuously absent from the popular Python libraries.  My own theory is this:</p>
+<ol>
+<li>Hardcore statisticians do not belive in iterative model refinement.  Instead, they believe model selection should be guided by a solid understanding of the underlying domain.  In this view, a variable should only be included in a model if there is a <em>reason</em> to included it (if a plausible story can be told about <em>why</em> it should be in the model).</li>
+<li>The machine learning community is understandably more sympathetic to the "throw everything into the model and let the algoririthm sort it out" approach.  However, this community has no special affinity for ordinary least squares regression&mdash;there are so many other techniques out there that are deemed better/more stable.</li>
+</ol>
+<p>The bottom line (in my theory) is that neither the hardcore statistics community nor the machine learning community see iterative refinement of OLS models as worthwhile for real-word modeling.  Accordingly, you should adopt one of the two perspectives above:</p>
+<ol>
+<li>Use manual model refinement guided by domain knowledge to create a linear regression model that makes sense</li>
+<li>Build on your new foundation of Python to learn more sophisticated machine learning technique and forget about stepwise refinement of linear regression.</li>
+</ol>
+<p>Given this, I have moved the section on stepwise refinement to the end of the lesson.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Regression-diagnostics">Regression diagnostics<a class="anchor-link" href="#Regression-diagnostics"> </a></h2><p>As we did in the lesson on <a href="regression.html">simple regression</a>, we can generate our favorite diagnostic plots to determine whether the resulting regression model is valid.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">mod1_res</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">fit</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="images/10_multiple_regression_35_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">mod1_res</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">showmeans</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="images/10_multiple_regression_36_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sm</span><span class="o">.</span><span class="n">qqplot</span><span class="p">(</span><span class="n">mod1_res</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="images/10_multiple_regression_37_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">Y_max</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">Y_min</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">mod1_res</span><span class="o">.</span><span class="n">fittedvalues</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="n">Y_min</span><span class="p">,</span> <span class="n">Y_max</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="n">Y_min</span><span class="p">,</span> <span class="n">Y_max</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Predicted value of Strength&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Observed value of Strength&quot;</span><span class="p">)</span>
+
+<span class="n">X_ref</span> <span class="o">=</span> <span class="n">Y_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">Y_min</span><span class="p">,</span> <span class="n">Y_max</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_ref</span><span class="p">,</span> <span class="n">Y_ref</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="images/10_multiple_regression_38_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Standardized-regression-coefficients">Standardized regression coefficients<a class="anchor-link" href="#Standardized-regression-coefficients"> </a></h2><p>As discussed in the <a href="http://www.sfu.ca/~mjbrydon/tutorials/BAinR/multiregression.html#standardized-regression-coefficients">R tutorials</a>, standardized regression coefficients provide an easy way to estimate effect size that is indepedent of units.</p>
+<p>Although estracting standardized coefficients is farily easy in R, we have to be a bit more explicit in Python:</p>
+<ol>
+<li>Transform the <em>Y</em> and each column of the <em>X</em> matrices into standardize values (<em>z</em>-scores) with mean = 0 and standard deviation = 1.0.</li>
+<li>Run the regression with the standardized inputs.  This provides standardized regression coefficients</li>
+<li>Extract and display the standardized coefficient</li>
+</ol>
+<h3 id="Creating-standardized-input-matrices">Creating standardized input matrices<a class="anchor-link" href="#Creating-standardized-input-matrices"> </a></h3><p>Here, I use the <code>zscore()</code> method from Scipy.  The only trick is that <code>zscore()</code> returns an array and I prefer to work with Pandas data frames (or series, for single-column data frames).  To get around this, I wrap the <code>zscore()</code> call inside the <code>Series()</code> constructor.  I pass the constructor the name of the original <em>Y</em> series to keep everything the same.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="n">Y_norm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="n">Y</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="n">Y_norm</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0    0.233336
+1   -0.061669
+2    0.283264
+Name: Strength, dtype: float64</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <em>X</em> matrix is a bit trickier because the first column (the "const" column we created above) has zero variance&mdash;recall that is is just a column of 1s.  The definition of <em>z</em>-score is $$z = \frac{x - \bar{x}}{S}$$.  If there is no variance, the <em>z</em>-score is undefined and everything breaks.  To get around this, I do the following:</p>
+<ol>
+<li>I create a new data frame called "X1_norm by using the Pandas <code>loc[]</code> function to select just a subset of columns. In the first line, I select all rows (:) and all columns where the column name is not equal to "const.</li>
+<li>I apply the <code>zscore()</code> method to the entire "X1_norm" data frame.</li>
+<li>Since I stripped the constant in the first line, I add it back by recalling the <code>add_constant()</code> method</li>
+<li>I apply the column names from my original "X1" data frame to the new "X1_norm" data frame</li>
+<li>I perform a quick check to confirm the values for all explanatory variables are normalized with mean = 0 and (population) standard deviation = 1.</li>
+</ol>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X1_norm</span> <span class="o">=</span> <span class="n">X1</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">X1</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="s2">&quot;const&quot;</span><span class="p">]</span>
+<span class="n">X1_norm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">X1_norm</span><span class="p">))</span>
+<span class="n">X1_norm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X1_norm</span><span class="p">)</span>
+<span class="n">X1_norm</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">X1</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">check</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="nb">round</span><span class="p">(</span><span class="n">X1_norm</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">X1_norm</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mi">5</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">check</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std dev&quot;</span><span class="p">]</span>
+<span class="n">check</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean</th>
+      <th>std dev</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>const</th>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>No</th>
+      <td>-0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Cement</th>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Slag</th>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>FlyAsh</th>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Water</th>
+      <td>-0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>SP</th>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>CoarseAgg</th>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>AirEntrain_Yes</th>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Running-the-standardized-regression">Running the standardized regression<a class="anchor-link" href="#Running-the-standardized-regression"> </a></h3><p>Once the standardized input matrices are in place, running a standardized regression is no different from running any other regression.  The difference is that we know the coefficients are now expressed  in terms of number of standard deviations rather than kilograms, megapascals, and so on.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">modstd</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">Y_norm</span><span class="p">,</span> <span class="n">X1_norm</span><span class="p">)</span>
+<span class="n">modstd_res</span> <span class="o">=</span> <span class="n">modstd</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">modstd_res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>        <td>Strength</td>     <th>  R-squared:         </th> <td>   0.924</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.917</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   142.2</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 07 Apr 2020</td> <th>  Prob (F-statistic):</th> <td>4.73e-49</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>10:47:00</td>     <th>  Log-Likelihood:    </th> <td> -13.650</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   103</td>      <th>  AIC:               </th> <td>   45.30</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    94</td>      <th>  BIC:               </th> <td>   69.01</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     8</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+         <td></td>           <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th>          <td> 1.735e-16</td> <td>    0.028</td> <td> 6.09e-15</td> <td> 1.000</td> <td>   -0.057</td> <td>    0.057</td>
+</tr>
+<tr>
+  <th>No</th>             <td>   -0.0575</td> <td>    0.034</td> <td>   -1.674</td> <td> 0.097</td> <td>   -0.126</td> <td>    0.011</td>
+</tr>
+<tr>
+  <th>Cement</th>         <td>    0.8336</td> <td>    0.046</td> <td>   18.070</td> <td> 0.000</td> <td>    0.742</td> <td>    0.925</td>
+</tr>
+<tr>
+  <th>Slag</th>           <td>    0.1175</td> <td>    0.042</td> <td>    2.819</td> <td> 0.006</td> <td>    0.035</td> <td>    0.200</td>
+</tr>
+<tr>
+  <th>FlyAsh</th>         <td>    0.8180</td> <td>    0.047</td> <td>   17.367</td> <td> 0.000</td> <td>    0.724</td> <td>    0.911</td>
+</tr>
+<tr>
+  <th>Water</th>          <td>   -0.2903</td> <td>    0.041</td> <td>   -7.131</td> <td> 0.000</td> <td>   -0.371</td> <td>   -0.209</td>
+</tr>
+<tr>
+  <th>SP</th>             <td>    0.0591</td> <td>    0.033</td> <td>    1.791</td> <td> 0.077</td> <td>   -0.006</td> <td>    0.125</td>
+</tr>
+<tr>
+  <th>CoarseAgg</th>      <td>   -0.1342</td> <td>    0.045</td> <td>   -2.964</td> <td> 0.004</td> <td>   -0.224</td> <td>   -0.044</td>
+</tr>
+<tr>
+  <th>AirEntrain_Yes</th> <td>   -0.3282</td> <td>    0.030</td> <td>  -10.946</td> <td> 0.000</td> <td>   -0.388</td> <td>   -0.269</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 4.255</td> <th>  Durbin-Watson:     </th> <td>   1.637</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.119</td> <th>  Jarque-Bera (JB):  </th> <td>   3.680</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.352</td> <th>  Prob(JB):          </th> <td>   0.159</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 3.601</td> <th>  Cond. No.          </th> <td>    4.11</td>
+</tr>
+</table><br/><br/>Warnings:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Tornado-diagram">Tornado diagram<a class="anchor-link" href="#Tornado-diagram"> </a></h3><p>Once we have the regression results, we can extract the coefficients using the <code>params</code> property and graph the standardized coefficients.  The only trick to getting a tornado diagram is that the coefficients have to be sorted in descending order by the <em>absolute value</em> of the coefficient.  I resort to a bity of Python trickery to get the items in the desired order.  As before, we see that "Cement" and "FlyAsh" are the most important drivers of concrete strength.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">coeff</span> <span class="o">=</span> <span class="n">modstd_res</span><span class="o">.</span><span class="n">params</span>
+<span class="n">coeff</span> <span class="o">=</span> <span class="n">coeff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[(</span><span class="n">coeff</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">*-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">argsort</span><span class="p">()]</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">coeff</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">coeff</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;h&#39;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="images/10_multiple_regression_46_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Stepwise-refinement:-an-aside">Stepwise refinement: an aside<a class="anchor-link" href="#Stepwise-refinement:-an-aside"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is certainly possible to code your own stepwise refinement procedure in Python: if you Google hard enough, you will find lots of these.  Finding an easy-to-use library version of R's <code>step()</code> function is more challenging.  The one I did find belongs to the MLxtend library. It is not a standard install you you might have to download it before you can run the <code>import</code> commands.  Installation instructions are <a href="http://rasbt.github.io/mlxtend/installation/">here</a> if you really must try it out.</p>
+<h3 id="Create-a-sklearn-kitchen-sink-model">Create a sklearn kitchen sink model<a class="anchor-link" href="#Create-a-sklearn-kitchen-sink-model"> </a></h3><p>The MLxtend library wraps around the sklearn <code>LinearRegression</code> function rather than the Statsmodels version we have been using so far.  Thus, we have to create a new linear regression object.  Unlike Statsmodel, sklearn's version does not require a column of 1s for the constant.  As such, have to create a new explanatory variable matrix without the "const" column:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X2</span> <span class="o">=</span> <span class="n">fullX</span>
+<span class="n">X2</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;const&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X2</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>No</th>
+      <th>Cement</th>
+      <th>Slag</th>
+      <th>FlyAsh</th>
+      <th>Water</th>
+      <th>SP</th>
+      <th>CoarseAgg</th>
+      <th>FineAgg</th>
+      <th>AirEntrain_Yes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>273.0</td>
+      <td>82.0</td>
+      <td>105.0</td>
+      <td>210.0</td>
+      <td>9.0</td>
+      <td>904.0</td>
+      <td>680.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>163.0</td>
+      <td>149.0</td>
+      <td>191.0</td>
+      <td>180.0</td>
+      <td>12.0</td>
+      <td>843.0</td>
+      <td>746.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>162.0</td>
+      <td>148.0</td>
+      <td>191.0</td>
+      <td>179.0</td>
+      <td>16.0</td>
+      <td>840.0</td>
+      <td>743.0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then we load the requried libraries.  I had to install the mlxtend package first.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">mlxtend.feature_selection</span> <span class="kn">import</span> <span class="n">SequentialFeatureSelector</span> <span class="k">as</span> <span class="n">SFS</span>
+<span class="kn">from</span> <span class="nn">mlxtend.plotting</span> <span class="kn">import</span> <span class="n">plot_sequential_feature_selection</span> <span class="k">as</span> <span class="n">plot_sfs</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can now create an sklearn regression model and confirm it works</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mod</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>LinearRegression(copy_X=True, fit_intercept=True, n_jobs=None, normalize=False)</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The resulting model is identical to our kitchen sink model from above.  We can verify by manually patching together a table of results (Sklearn's regression routine does not have the tidy summary provided by the Statsmodels version).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">coef</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">X2</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">coef_</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">coef</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;variable&quot;</span><span class="p">,</span> <span class="s2">&quot;coefficient&quot;</span><span class="p">]</span>
+<span class="n">coef</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>variable</th>
+      <th>coefficient</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>No</td>
+      <td>-0.017346</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cement</td>
+      <td>0.096195</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Slag</td>
+      <td>0.015681</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>FlyAsh</td>
+      <td>0.086950</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Water</td>
+      <td>-0.138011</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>SP</td>
+      <td>0.190158</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>CoarseAgg</td>
+      <td>-0.016038</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>FineAgg</td>
+      <td>-0.002053</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>AirEntrain_Yes</td>
+      <td>-6.068252</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Running-the-refinement-algorithm">Running the refinement algorithm<a class="anchor-link" href="#Running-the-refinement-algorithm"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The method we are using from the mlxtend library is called "sequential feature selector" (SFS).  We set up an SFS object and pass it a link to our regression model "mod" and some other parameters.  Running <code>fit()</code> creates a sequence of model versions created using standard backstep refinement (other approaches are possible by setting the <code>forward</code> and <code>floating</code> parameters.)</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sfs</span> <span class="o">=</span> <span class="n">SFS</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span>
+         <span class="n">k_features</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span>
+         <span class="n">forward</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">floating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">,</span>
+         <span class="n">cv</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">sfs</span> <span class="o">=</span> <span class="n">sfs</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Viewing-the-iterations">Viewing the iterations<a class="anchor-link" href="#Viewing-the-iterations"> </a></h3><p>We can wrap the output from the SFS object in a Pandas data frame and print the result.  Note that the data frame is sorted by the number of variables in the model, not the backstep sequence.  The model with eight variables has the highest "avg_score" and lowest "std_err".</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">sfs</span><span class="o">.</span><span class="n">get_metric_dict</span><span class="p">(</span><span class="n">confidence_interval</span><span class="o">=</span><span class="mf">0.95</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>feature_idx</th>
+      <th>cv_scores</th>
+      <th>avg_score</th>
+      <th>feature_names</th>
+      <th>ci_bound</th>
+      <th>std_dev</th>
+      <th>std_err</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>9</th>
+      <td>(0, 1, 2, 3, 4, 5, 6, 7, 8)</td>
+      <td>[0.5998230505243045, 0.8609825359671663, 0.776...</td>
+      <td>0.482171</td>
+      <td>(No, Cement, Slag, FlyAsh, Water, SP, CoarseAg...</td>
+      <td>0.249123</td>
+      <td>0.656901</td>
+      <td>0.121983</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>(0, 1, 2, 3, 5, 6, 7, 8)</td>
+      <td>[0.7198251274370645, 0.8714981991943233, 0.754...</td>
+      <td>0.538054</td>
+      <td>(No, Cement, Slag, FlyAsh, SP, CoarseAgg, Fine...</td>
+      <td>0.174763</td>
+      <td>0.460825</td>
+      <td>0.085573</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>(1, 2, 3, 5, 6, 7, 8)</td>
+      <td>[0.36909818696153074, 0.8029635284896328, 0.88...</td>
+      <td>0.489133</td>
+      <td>(Cement, Slag, FlyAsh, SP, CoarseAgg, FineAgg,...</td>
+      <td>0.193566</td>
+      <td>0.510403</td>
+      <td>0.0947795</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>(1, 2, 3, 6, 7, 8)</td>
+      <td>[-0.8836565141299142, 0.706855501290562, 0.793...</td>
+      <td>0.383902</td>
+      <td>(Cement, Slag, FlyAsh, CoarseAgg, FineAgg, Air...</td>
+      <td>0.234757</td>
+      <td>0.619018</td>
+      <td>0.114949</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>(1, 2, 3, 7, 8)</td>
+      <td>[-1.069902143989971, 0.7714511447380334, 0.721...</td>
+      <td>0.203047</td>
+      <td>(Cement, Slag, FlyAsh, FineAgg, AirEntrain_Yes)</td>
+      <td>0.312601</td>
+      <td>0.824281</td>
+      <td>0.153065</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>(1, 2, 3, 8)</td>
+      <td>[-1.4776700426094105, 0.7791381638911106, 0.97...</td>
+      <td>0.1767</td>
+      <td>(Cement, Slag, FlyAsh, AirEntrain_Yes)</td>
+      <td>0.364705</td>
+      <td>0.961673</td>
+      <td>0.178578</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>(1, 3, 8)</td>
+      <td>[-2.851586980465301, 0.7005985979007635, 0.857...</td>
+      <td>-0.118087</td>
+      <td>(Cement, FlyAsh, AirEntrain_Yes)</td>
+      <td>0.610482</td>
+      <td>1.60975</td>
+      <td>0.298923</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>(1, 3)</td>
+      <td>[-3.062125555844749, 0.2731746363441382, 0.902...</td>
+      <td>-0.732105</td>
+      <td>(Cement, FlyAsh)</td>
+      <td>0.797207</td>
+      <td>2.10211</td>
+      <td>0.390353</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>(1,)</td>
+      <td>[-3.449038765590842, 0.011736536060135583, 0.5...</td>
+      <td>-3.40673</td>
+      <td>(Cement,)</td>
+      <td>2.04263</td>
+      <td>5.38611</td>
+      <td>1.00018</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Picking-the-best-model-visually">Picking the best model visually<a class="anchor-link" href="#Picking-the-best-model-visually"> </a></h3><p>MLxtend includes a handy plot for visualizing the best model. As in SAS Enterprise Guide, we are looking for the model with the highest score.  Again, it appears the model with 8 variables is slightly better than some of the other models.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_sfs</span><span class="p">(</span><span class="n">sfs</span><span class="o">.</span><span class="n">get_metric_dict</span><span class="p">(),</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;std_err&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="images/10_multiple_regression_62_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Viewing-the-best-model">Viewing the best model<a class="anchor-link" href="#Viewing-the-best-model"> </a></h3><p>We can access the model with 8 variables using 8 as an index (as in the data frame presentation above). We can further narrow down on variable names in the best model:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sfs</span><span class="o">.</span><span class="n">subsets_</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feature_names&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(&#39;No&#39;,
+ &#39;Cement&#39;,
+ &#39;Slag&#39;,
+ &#39;FlyAsh&#39;,
+ &#39;SP&#39;,
+ &#39;CoarseAgg&#39;,
+ &#39;FineAgg&#39;,
+ &#39;AirEntrain_Yes&#39;)</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Interestingly, this backstep algorithm dropped the variable "Water" whereas we dropped "FineAgg" in the manual approach.  R's <code>step()</code> function also dropped "FineAgg" first.  Divergent results such as this are part of the reason some in the machine learning community do not like stepwise refinement of linear regression models.  However, they remain interesting for teaching purposes.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
+            </div>
+            <div class="c-textbook__footer" id="textbook_footer">
+              
+<nav class="c-page__nav">
+  
+    
+    
+
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/~mjbrydon/tutorials/BAinPy/09_regression.html">
+      〈 <span class="u-margin-right-tiny"></span> Simple Linear Regression
+    </a>
+  
+
+  
+    
+
+    
+    <a id="js-page__nav__next" class="c-page__nav__next" href="">
+       <span class="u-margin-right-tiny"></span> 〉
+    </a>
+  
+</nav>
+
+              <footer>
+  <p class="footer"></p>
+</footer>
+
+            </div>
+
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

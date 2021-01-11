@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+
+  <title>Search the site</title>
+  <meta name="description" content="        ">
+
+  <link rel="canonical" href="http://localhost:4000/~mjbrydon/tutorials/BAinPy/search">
+  <link rel="alternate" type="application/rss+xml" title="Basic Analytics in Python" href="http://localhost:4000/~mjbrydon/tutorials/BAinPy/feed.xml">
+
+  <meta property="og:url"         content="http://localhost:4000/~mjbrydon/tutorials/BAinPy/search" />
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="Search the site" />
+<meta property="og:description" content="        " />
+<meta property="og:image"       content="" />
+
+<meta name="twitter:card" content="summary">
+
+
+  <script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/search",
+  "headline": "Search the site",
+  "datePublished": "2020-09-09T12:13:08-07:00",
+  "dateModified": "2020-09-09T12:13:08-07:00",
+  "description": "        ",
+  "author": {
+    "@type": "Person",
+    "name": "Michael Brydon"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Data 100 at UC Berkeley",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy",
+      "width": 60,
+      "height": 60
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy",
+    "height": 60,
+    "width": 60
+  }
+}
+
+  </script>
+  <link rel="stylesheet" href="/~mjbrydon/tutorials/BAinPy/assets/css/styles.css">
+
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#efae0a"> -->
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#233947">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="">
+
+  <!-- MathJax Config -->
+  <!-- Allow inline math using $ and automatically break long math lines -->
+<!-- (mostly) copied from nbconvert configuration -->
+<!-- https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/mathjax.tpl -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    // Center justify equations in code and markdown cells. Elsewhere
+    // we use CSS to left justify single line equations in code cells.
+    displayAlign: 'center',
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}},
+        linebreaks: { automatic: true },
+    },
+    
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML' async></script>
+
+
+  <!-- DOM updating function -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/dom-update.js"></script>
+
+  <!-- Selectors for elements on the page -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/documentSelectors.js"></script>
+
+  <!-- Define some javascript variables that will be useful in other javascript -->
+  <script>
+    const site_basename = '/~mjbrydon/tutorials/BAinPy';
+  </script>
+
+  <!-- Add AnchorJS to let headers be linked -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" async></script>
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/anchors.js" async></script>
+
+  <!-- Include Turbolinks to make page loads fast -->
+  <!-- https://github.com/turbolinks/turbolinks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js" async></script>
+  <meta name="turbolinks-cache-control" content="no-cache">
+
+  <!-- Load nbinteract for widgets -->
+  
+
+  <!-- Load Thebelab for interactive widgets -->
+  <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+
+  <!-- Load the auto-generating TOC (non-async otherwise the TOC won't load w/ turbolinks) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js" async></script>
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/tocbot.js"></script>
+
+  <!-- Google analytics -->
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-163030947-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-163030947-2');
+</script>
+
+
+
+  <!-- Clipboard copy button -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script>
+
+  <!-- Load custom website scripts -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/scripts.js" async></script>
+
+  <!-- Load custom user CSS and JS  -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/custom/custom.js" async></script>
+  <link rel="stylesheet" href="/~mjbrydon/tutorials/BAinPy/assets/custom/custom.css">
+
+  <!-- Update interact links w/ REST param, is defined in includes so we can use templates -->
+  
+
+  <!-- Lunr search code - will only be executed on the /search page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js" async></script>
+  <script>var initQuery = function() {
+  // See if we have a search box
+  var searchInput = document.querySelector('input#lunr_search');
+  if (searchInput === null) {
+    return;
+  }
+
+  // Function to parse our lunr cache
+  var idx = lunr(function () {
+    this.field('title')
+    this.field('excerpt')
+    this.field('categories')
+    this.field('tags')
+    this.ref('id')
+
+    this.pipeline.remove(lunr.trimmer)
+
+    for (var item in store) {
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        categories: store[item].categories,
+        tags: store[item].tags,
+        id: item
+      })
+    }
+  });
+
+  // Run search upon keyup
+  searchInput.addEventListener('keyup', function () {
+    var resultdiv = document.querySelector('#results');
+    var query = document.querySelector("input#lunr_search").value.toLowerCase();
+    var result =
+      idx.query(function (q) {
+        query.split(lunr.tokenizer.separator).forEach(function (term) {
+          q.term(term, { boost: 100 })
+          if(query.lastIndexOf(" ") != query.length-1){
+            q.term(term, {  usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
+          }
+          if (term != ""){
+            q.term(term, {  usePipeline: false, editDistance: 1, boost: 1 })
+          }
+        })
+      });
+
+      // Empty the results div
+      while (resultdiv.firstChild) {
+        resultdiv.removeChild(resultdiv.firstChild);
+      }
+
+    resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">'+result.length+' Result(s) found</p>');
+    for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+    	  var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
+    }
+  });
+};
+
+initFunction(initQuery);
+</script>
+
+  <!-- Load JS that depends on site variables -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/copy-button.js" async></script>
+
+  <!-- Hide cell code -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/hide-cell.js" async></script>
+
+  <!-- Printing the screen -->
+  <!-- Include nbinteract for interactive widgets -->
+<script src="https://printjs-4de6.kxcdn.com/print.min.js" async></script>
+<script>
+printContent = () => {
+    // MathJax displays a second version of any math for assistive devices etc.
+    // This prevents double-rendering in the PDF output.
+    var ignoreAssistList = [];
+    assistives = document.querySelectorAll('.MathJax_Display span.MJX_Assistive_MathML').forEach((element, index) => {
+        var thisId = 'MathJax-assistive-' + index.toString();
+        element.setAttribute('id', thisId);
+        ignoreAssistList.push(thisId)
+    });
+
+    // Print the actual content object
+    printJS({
+        printable: 'textbook_content',
+        type: 'html',
+        css: "/~mjbrydon/tutorials/BAinPy/assets/css/styles.css",
+        style: "#textbook_content {padding-top: 40px};",
+        scanStyles: false,
+        targetStyles: ["*"],
+        ignoreElements: ignoreAssistList,
+        documentTitle: ""
+    })
+};
+
+initPrint = () => {
+    document.querySelector('#interact-button-print').addEventListener('click', printContent)
+}
+
+initFunction(initPrint)
+</script>
+
+</head>
+
+  <body>
+    <!-- Include the ThebeLab config so it gets reloaded on each page -->
+    <script type="text/x-thebe-config">{
+    requestKernel: true,
+    binderOptions: {
+    repo: "YOUR-ORG/YOUR-REPO",
+    ref: "gh-pages",
+    },
+    codeMirrorConfig: {
+    theme: "abcdef",
+    mode: "python"
+    },
+    kernelOptions: {
+    kernelName: "python3",
+    path: ""
+    }
+}
+</script>
+
+    <!-- .js-show-sidebar shows sidebar by default -->
+    <div id="js-textbook" class="c-textbook js-show-sidebar">
+      
+
+
+
+<nav id="js-sidebar" class="c-textbook__sidebar">
+  
+  <h2 class="c-sidebar__title">Basic Analytics in Python</h2>
+  <ul class="c-sidebar__chapters">
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/01_intro">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/01_intro.html"
+        >
+          
+            1.
+          
+          Introduction to Python for Data Analysis
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/02_data">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/02_data.html"
+        >
+          
+            2.
+          
+          Importing Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/03_visualization">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/03_visualization.html"
+        >
+          
+            3.
+          
+          Basic Visualization
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/04_filter">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/04_filter.html"
+        >
+          
+            4.
+          
+          Filtering Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/05_recode">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/05_recode.html"
+        >
+          
+            5.
+          
+          Recoding Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/06_t-test">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/06_t-test.html"
+        >
+          
+            6.
+          
+          Gap Analysis Using t-Tests
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/07_contingency">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/07_contingency.html"
+        >
+          
+            7.
+          
+          Gap Analysis with Categorical Variables
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/08_correlation">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/08_correlation.html"
+        >
+          
+            8.
+          
+          Correlation and Scatterplots
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/09_regression">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/09_regression.html"
+        >
+          
+            9.
+          
+          Simple Linear Regression
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/10_multiple_regression">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/10_multiple_regression.html"
+        >
+          
+            10.
+          
+          Multiple Linear Regression
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+  </ul>
+  <p class="sidebar_footer"></p>
+</nav>
+
+      
+      <div class="c-topbar" id="top-navbar">
+  <!-- We show the sidebar by default so we use .is-active -->
+  <div class="c-topbar__buttons">
+    <button
+      id="js-sidebar-toggle"
+      class="hamburger hamburger--arrowalt is-active"
+    >
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+    <div class="buttons">
+<div class="download-buttons-dropdown">
+    <button id="dropdown-button-trigger" class="interact-button"><img src="/~mjbrydon/tutorials/BAinPy/assets/images/download-solid.svg" alt="Download" /></button>
+    <div class="download-buttons">
+        
+        <a id="interact-button-print"><button id="interact-button-download" class="interact-button">.pdf</button></a>
+    </div>
+</div>
+
+
+</div>
+
+  </div>
+  <!-- Empty sidebar placeholder that we'll auto-fill with javascript -->
+  <aside class="sidebar__right">
+    <header><h4 class="nav__title"><img src="/~mjbrydon/tutorials/BAinPy/assets/images/list-solid.svg" alt="Search" />   On this page</h4></header>
+    <nav class="onthispage">
+    </nav>
+  </aside>
+  <a href="/~mjbrydon/tutorials/BAinPy/search.html" class="topbar-right-button" id="search-button">
+    <img src="/~mjbrydon/tutorials/BAinPy/assets/images/search-solid.svg" alt="Search" />
+  </a>
+</div>
+
+      <main class="c-textbook__page" tabindex="-1">
+            <div class="c-textbook__content" id="textbook_content">
+              <div class="search-content__inner-wrap">
+    <input type="text" id="lunr_search" class="search-input" tabindex="-1" placeholder="'Enter your search term...''" />
+    <div id="results" class="results"></div>
+</div>
+
+<script>
+    // Add the lunr store since we will now search it
+    var store = [{
+        "title": "Introduction to Python for Data Analysis",
+        
+        "excerpt": "python jupyter r notebook notebooks start language anaconda data libraries much should essential training introduction analysis recall developed manipulation create just learning course tutorials using few linkedin called writing interactive prompt statistical programming designed things tidyverse functionality computer used any written windows point underlying excel sas enterprise guide through provides tutorial web com x e g short easier environment getting bit page enter code document started knowing files me back command line operating system cd navigate directory program new languagemdasha t tests regression core during s since such greatly extend hand general purpose kind software including based applications however recent",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/01_intro.html",
+        "teaser":null},{
+        "title": "Importing Data",
+        
+        "excerpt": "data pandas python frame columns dataframe object file method bank library values column code type r using not alert same slashes gender rows objects our example reference here sure name arguments called csv computer readcsv div windows ol li backslashes uses string describe factor because category notation importing recall just useful properties through users us must creating jupyter possible note such pd programming head imported info above either excel instead running between list strings term conversion female things its gives spreadsheet database methods into contains core language save once created made programs import new notebook programmers typing again typically alias",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/02_data.html",
+        "teaser":null},{
+        "title": "Basic Visualization",
+        
+        "excerpt": "seaborn library density method plot basic python histograms data distribution kernel graphics provides object recall using get matplotlib few creating histogram r default y axis frequency normal libraries used common boxplots import descriptive series multiple columns found variable such our before sns just distplot things notice output value bins change not rather simple fit reference curve scipy parameter between mean visualization tutorial show its create types distributional plots preliminaries include commands start lesson lessons self contained statistics pandas statistic functions methods dataframe consists thus average salary bank employees similarly save typing statistical summary numerical describe extension addresses specific challenges including",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/03_visualization.html",
+        "teaser":null},{
+        "title": "Filtering Data",
+        
+        "excerpt": "data filtering vector boolean female frame employees list expression result only vectors value values import pandas whether gender equal true false row results python method used mean applied example want round whole condition filter categorical create approach means limiting rows columns clearly central any analysis preliminaries include library commands start lesson lessons self contained relies heavily concept illustrate consider following tests column string r languages logical comparison operator double equals trues falses corresponding once apply original returned skipped looks notation too cumbersome assign separate contains type sure calculate salary basic built functions core types such integers floating point numbers take",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/04_filter.html",
+        "teaser":null},{
+        "title": "Filtering data",
+        
+        "excerpt": "data filtering vector boolean female frame employees list expression result only vectors value values import pandas whether gender equal true false row results python method used mean applied example want round whole condition filter categorical create approach means limiting rows columns clearly central any analysis preliminaries include library commands start lesson lessons self contained relies heavily concept illustrate consider following tests column string r languages logical comparison operator double equals trues falses corresponding once apply original returned skipped looks notation too cumbersome assign separate contains type sure calculate salary basic built functions core types such integers floating point numbers take",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/04_filtering.html",
+        "teaser":null},{
+        "title": "Recoding Data",
+        
+        "excerpt": "function column value method data pandas not ternary operator job r argument expression gender lambda list replace managerial series our code new called drop where true bank works python apply recoding frame dummy work inline does numpy create grades grade import library start add below values useful using because arrays might expect following pythons takes return logical else false female approach course used same applying myrecode returns passed us case explicit non take lists example corresponding status six th underlying instead results variables want transform log salary preliminaries include commands lesson lessons self contained appending set every zero setting constant",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/05_recode.html",
+        "teaser":null},{
+        "title": "Gap Analysis Using t-Tests",
+        
+        "excerpt": "data test gender salaries salary histograms r t analysis female create method gap employees library variable same not bit kernel density whether different sample bank male plot plots here list genders frame tests variance unequal summary determine our running steps also results start boxplot x higher grid column rows values object result thus iterate subset enough python true variances levenes difference recall samples want communicating any formal techniques import permits both y resulting must jobgrade convert job grades mean comparative generate makes overlaying sas just through typing filtering note instead frames excel format run equal although boolean vector false based",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/06_t-test.html",
+        "teaser":null},{
+        "title": "Gap Analysis with Categorical Variables",
+        
+        "excerpt": "row frequencies chi test table percentages relative normalize managers variables contingency very gender manager get marginal showing probability female employees instead index independence line statistic include import set true totals useful here using total not because non bank squared managerial status r scipy method chicontingency observed output safely ignore independent p value expected values different gap analysis categorical preliminaries data library commands start lesson lessons self contained creating pandas simple feature below specify interest margins typically less am interested versus male argument frequency cell want parameter why sums thus males advantage presentation directly comparable even though majority leave us impression",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/07_contingency.html",
+        "teaser":null},{
+        "title": "Correlation and Scatterplots",
+        
+        "excerpt": "correlation r data variables method between value seaborn variable concrete strength not scatterplot matrix set columns here linear scatterplots type generally less things results python frame library line fly ash coefficient column name list axis create adding does best fit add relationship color third dimension indicates numbers cement slag relationships continuous names underlying before code start lets pandas object convert form key assign true should obvious ways basic independent labels much charts because need our return whatever properties called ax values above different seaborns colors height calculate pearsons same conclude based weak influence causality its every example heatmap tutorial explore",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/08_correlation.html",
+        "teaser":null},{
+        "title": "Simple Linear Regression",
+        
+        "excerpt": "regression data linear y fit values plot statsmodels residuals column model x line beta matrix constant predicted q variable observed plots library ols ordinary equation array parameters above not single python here method least squares best sense just s think numbers our concrete why add row simply alert missing r seaborn normal reference boxplot versus deg explanatory provides output similar create gives methodological non intended problem since recall value response dimensional vector case strength actually another often creating following steps define keeps estimate using set index very addconstant difference const intercept slope b multiply get div drop errors normally distributed",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/09_regression.html",
+        "teaser":null},{
+        "title": "Multiple Linear Regression",
+        
+        "excerpt": "model regression variables data matrix variable refinement r column explanatory x method not standardized python using categorical our coefficients create columns manual stepwise statsmodels kitchen sink values dummy approach frame formula linear running new library best sas version scatterplot should mlxtend before need pandas libraries names y because ols used results here such instead things mode power community standard airentrain excel enterprise guide n set different pass yes into matrices run better models value highest fineagg backstep machine learning above z zscore function start frames strength note work html includes output us let algorithm typically provide mean bit getdummies zero",
+        "categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/10_multiple_regression.html",
+        "teaser":null},]
+</script>
+            </div>
+            <div class="c-textbook__footer" id="textbook_footer">
+              
+<nav class="c-page__nav">
+  
+
+  
+</nav>
+
+              <footer>
+  <p class="footer"></p>
+</footer>
+
+            </div>
+
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

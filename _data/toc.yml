@@ -1,0 +1,31 @@
+
+- url: /01_intro
+  not_numbered: false
+  
+- url: /02_data
+  not_numbered: false
+  
+- url: /03_visualization
+  not_numbered: false
+  
+- url: /04_filter
+  not_numbered: false
+  
+- url: /05_recode
+  not_numbered: false
+  
+- title: 'Gap Analysis Using t-Tests'
+  url: /06_t-test
+  not_numbered: false
+  
+- url: /07_contingency
+  not_numbered: false
+  
+- url: /08_correlation
+  not_numbered: false
+  
+- url: /09_regression
+  not_numbered: false
+  
+- url: /10_multiple_regression
+  not_numbered: false

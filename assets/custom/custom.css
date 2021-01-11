@@ -1,0 +1,19 @@
+/* Put your custom CSS here */
+.left {
+    margin: 5px 2px 2px 0px !important;
+    float: left !important;
+}
+
+/* from Bootstrap.css */
+.alert-info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+.alert {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}

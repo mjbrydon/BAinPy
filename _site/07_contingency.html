@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+
+  <title>Gap Analysis with Categorical Variables</title>
+  <meta name="description" content="        Gap Analysis with Categorical Variables    Preliminaries&#182; I include the data import and library import commands at the start of each lesson so t...">
+
+  <link rel="canonical" href="http://localhost:4000/~mjbrydon/tutorials/BAinPy/07_contingency.html">
+  <link rel="alternate" type="application/rss+xml" title="Basic Analytics in Python" href="http://localhost:4000/~mjbrydon/tutorials/BAinPy/feed.xml">
+
+  <meta property="og:url"         content="http://localhost:4000/~mjbrydon/tutorials/BAinPy/07_contingency.html" />
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="Gap Analysis with Categorical Variables" />
+<meta property="og:description" content="        Gap Analysis with Categorical Variables    Preliminaries&#182; I include the data import and library import commands at the start of each lesson so t..." />
+<meta property="og:image"       content="" />
+
+<meta name="twitter:card" content="summary">
+
+
+  <script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/07_contingency.html",
+  "headline": "Gap Analysis with Categorical Variables",
+  "datePublished": "2020-09-09T12:13:08-07:00",
+  "dateModified": "2020-09-09T12:13:08-07:00",
+  "description": "        Gap Analysis with Categorical Variables    Preliminaries&#182; I include the data import and library import commands at the start of each lesson so t...",
+  "author": {
+    "@type": "Person",
+    "name": "Michael Brydon"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Data 100 at UC Berkeley",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy",
+      "width": 60,
+      "height": 60
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy",
+    "height": 60,
+    "width": 60
+  }
+}
+
+  </script>
+  <link rel="stylesheet" href="/~mjbrydon/tutorials/BAinPy/assets/css/styles.css">
+
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#efae0a"> -->
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#233947">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="">
+
+  <!-- MathJax Config -->
+  <!-- Allow inline math using $ and automatically break long math lines -->
+<!-- (mostly) copied from nbconvert configuration -->
+<!-- https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/mathjax.tpl -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    // Center justify equations in code and markdown cells. Elsewhere
+    // we use CSS to left justify single line equations in code cells.
+    displayAlign: 'center',
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}},
+        linebreaks: { automatic: true },
+    },
+    
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML' async></script>
+
+
+  <!-- DOM updating function -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/dom-update.js"></script>
+
+  <!-- Selectors for elements on the page -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/documentSelectors.js"></script>
+
+  <!-- Define some javascript variables that will be useful in other javascript -->
+  <script>
+    const site_basename = '/~mjbrydon/tutorials/BAinPy';
+  </script>
+
+  <!-- Add AnchorJS to let headers be linked -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" async></script>
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/anchors.js" async></script>
+
+  <!-- Include Turbolinks to make page loads fast -->
+  <!-- https://github.com/turbolinks/turbolinks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js" async></script>
+  <meta name="turbolinks-cache-control" content="no-cache">
+
+  <!-- Load nbinteract for widgets -->
+  
+
+  <!-- Load Thebelab for interactive widgets -->
+  <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+
+  <!-- Load the auto-generating TOC (non-async otherwise the TOC won't load w/ turbolinks) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js" async></script>
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/tocbot.js"></script>
+
+  <!-- Google analytics -->
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-163030947-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-163030947-2');
+</script>
+
+
+
+  <!-- Clipboard copy button -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script>
+
+  <!-- Load custom website scripts -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/scripts.js" async></script>
+
+  <!-- Load custom user CSS and JS  -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/custom/custom.js" async></script>
+  <link rel="stylesheet" href="/~mjbrydon/tutorials/BAinPy/assets/custom/custom.css">
+
+  <!-- Update interact links w/ REST param, is defined in includes so we can use templates -->
+  
+
+  <!-- Lunr search code - will only be executed on the /search page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js" async></script>
+  <script>var initQuery = function() {
+  // See if we have a search box
+  var searchInput = document.querySelector('input#lunr_search');
+  if (searchInput === null) {
+    return;
+  }
+
+  // Function to parse our lunr cache
+  var idx = lunr(function () {
+    this.field('title')
+    this.field('excerpt')
+    this.field('categories')
+    this.field('tags')
+    this.ref('id')
+
+    this.pipeline.remove(lunr.trimmer)
+
+    for (var item in store) {
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        categories: store[item].categories,
+        tags: store[item].tags,
+        id: item
+      })
+    }
+  });
+
+  // Run search upon keyup
+  searchInput.addEventListener('keyup', function () {
+    var resultdiv = document.querySelector('#results');
+    var query = document.querySelector("input#lunr_search").value.toLowerCase();
+    var result =
+      idx.query(function (q) {
+        query.split(lunr.tokenizer.separator).forEach(function (term) {
+          q.term(term, { boost: 100 })
+          if(query.lastIndexOf(" ") != query.length-1){
+            q.term(term, {  usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
+          }
+          if (term != ""){
+            q.term(term, {  usePipeline: false, editDistance: 1, boost: 1 })
+          }
+        })
+      });
+
+      // Empty the results div
+      while (resultdiv.firstChild) {
+        resultdiv.removeChild(resultdiv.firstChild);
+      }
+
+    resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">'+result.length+' Result(s) found</p>');
+    for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+    	  var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
+    }
+  });
+};
+
+initFunction(initQuery);
+</script>
+
+  <!-- Load JS that depends on site variables -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/copy-button.js" async></script>
+
+  <!-- Hide cell code -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/hide-cell.js" async></script>
+
+  <!-- Printing the screen -->
+  <!-- Include nbinteract for interactive widgets -->
+<script src="https://printjs-4de6.kxcdn.com/print.min.js" async></script>
+<script>
+printContent = () => {
+    // MathJax displays a second version of any math for assistive devices etc.
+    // This prevents double-rendering in the PDF output.
+    var ignoreAssistList = [];
+    assistives = document.querySelectorAll('.MathJax_Display span.MJX_Assistive_MathML').forEach((element, index) => {
+        var thisId = 'MathJax-assistive-' + index.toString();
+        element.setAttribute('id', thisId);
+        ignoreAssistList.push(thisId)
+    });
+
+    // Print the actual content object
+    printJS({
+        printable: 'textbook_content',
+        type: 'html',
+        css: "/~mjbrydon/tutorials/BAinPy/assets/css/styles.css",
+        style: "#textbook_content {padding-top: 40px};",
+        scanStyles: false,
+        targetStyles: ["*"],
+        ignoreElements: ignoreAssistList,
+        documentTitle: ""
+    })
+};
+
+initPrint = () => {
+    document.querySelector('#interact-button-print').addEventListener('click', printContent)
+}
+
+initFunction(initPrint)
+</script>
+
+</head>
+
+  <body>
+    <!-- Include the ThebeLab config so it gets reloaded on each page -->
+    <script type="text/x-thebe-config">{
+    requestKernel: true,
+    binderOptions: {
+    repo: "YOUR-ORG/YOUR-REPO",
+    ref: "gh-pages",
+    },
+    codeMirrorConfig: {
+    theme: "abcdef",
+    mode: "python"
+    },
+    kernelOptions: {
+    kernelName: "python3",
+    path: "content"
+    }
+}
+</script>
+
+    <!-- .js-show-sidebar shows sidebar by default -->
+    <div id="js-textbook" class="c-textbook js-show-sidebar">
+      
+
+
+
+<nav id="js-sidebar" class="c-textbook__sidebar">
+  
+  <h2 class="c-sidebar__title">Basic Analytics in Python</h2>
+  <ul class="c-sidebar__chapters">
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/01_intro">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/01_intro.html"
+        >
+          
+            1.
+          
+          Introduction to Python for Data Analysis
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/02_data">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/02_data.html"
+        >
+          
+            2.
+          
+          Importing Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/03_visualization">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/03_visualization.html"
+        >
+          
+            3.
+          
+          Basic Visualization
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/04_filter">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/04_filter.html"
+        >
+          
+            4.
+          
+          Filtering Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/05_recode">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/05_recode.html"
+        >
+          
+            5.
+          
+          Recoding Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/06_t-test">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/06_t-test.html"
+        >
+          
+            6.
+          
+          Gap Analysis Using t-Tests
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/07_contingency">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/07_contingency.html"
+        >
+          
+            7.
+          
+          Gap Analysis with Categorical Variables
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/08_correlation">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/08_correlation.html"
+        >
+          
+            8.
+          
+          Correlation and Scatterplots
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/09_regression">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/09_regression.html"
+        >
+          
+            9.
+          
+          Simple Linear Regression
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/10_multiple_regression">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/10_multiple_regression.html"
+        >
+          
+            10.
+          
+          Multiple Linear Regression
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+  </ul>
+  <p class="sidebar_footer"></p>
+</nav>
+
+      
+      <div class="c-topbar" id="top-navbar">
+  <!-- We show the sidebar by default so we use .is-active -->
+  <div class="c-topbar__buttons">
+    <button
+      id="js-sidebar-toggle"
+      class="hamburger hamburger--arrowalt is-active"
+    >
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+    <div class="buttons">
+<div class="download-buttons-dropdown">
+    <button id="dropdown-button-trigger" class="interact-button"><img src="/~mjbrydon/tutorials/BAinPy/assets/images/download-solid.svg" alt="Download" /></button>
+    <div class="download-buttons">
+        <a href="/~mjbrydon/tutorials/BAinPy/content/07_contingency.ipynb" download>
+        <button id="interact-button-download" class="interact-button">.ipynb</button>
+        </a>
+        
+        <a id="interact-button-print"><button id="interact-button-download" class="interact-button">.pdf</button></a>
+    </div>
+</div>
+
+
+  
+  
+  
+  
+
+
+</div>
+
+  </div>
+  <!-- Empty sidebar placeholder that we'll auto-fill with javascript -->
+  <aside class="sidebar__right">
+    <header><h4 class="nav__title"><img src="/~mjbrydon/tutorials/BAinPy/assets/images/list-solid.svg" alt="Search" />   On this page</h4></header>
+    <nav class="onthispage">
+    </nav>
+  </aside>
+  <a href="/~mjbrydon/tutorials/BAinPy/search.html" class="topbar-right-button" id="search-button">
+    <img src="/~mjbrydon/tutorials/BAinPy/assets/images/search-solid.svg" alt="Search" />
+  </a>
+</div>
+
+      <main class="c-textbook__page" tabindex="-1">
+            <div class="c-textbook__content" id="textbook_content">
+                  <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Gap Analysis with Categorical Variables</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Preliminaries&#182;">Preliminaries&#182;<a class="anchor-link" href="#Preliminaries&#182;"> </a></h2><p>I include the data import and library import commands at the start of each lesson so that the lessons are self-contained.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="n">bank</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;Data/Bank.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># Recode JobGrade to Manager</span>
+<span class="n">grades</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+<span class="n">status</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;non-mgmt&quot;</span><span class="p">,</span> <span class="s2">&quot;non-mgmt&quot;</span><span class="p">,</span> <span class="s2">&quot;non-mgmt&quot;</span><span class="p">,</span> <span class="s2">&quot;non-mgmt&quot;</span><span class="p">,</span> <span class="s2">&quot;mgmt&quot;</span><span class="p">,</span> <span class="s2">&quot;mgmt&quot;</span><span class="p">]</span>
+<span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Manager&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bank</span><span class="p">[</span><span class="s1">&#39;JobGrade&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">grades</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Creating-a-contingency-table">Creating a contingency table<a class="anchor-link" href="#Creating-a-contingency-table"> </a></h2><p>Pandas has a very simple contingency table feature.  Below, I specify the two variables of interest (Gender and Manager) and set <code>margins=True</code> so I get marginal totals ("All").</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">contab_freq</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span>
+    <span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">],</span>
+    <span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Manager&#39;</span><span class="p">],</span>
+    <span class="n">margins</span> <span class="o">=</span> <span class="kc">True</span>
+   <span class="p">)</span>
+<span class="n">contab_freq</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Manager</th>
+      <th>mgmt</th>
+      <th>non-mgmt</th>
+      <th>All</th>
+    </tr>
+    <tr>
+      <th>Gender</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Female</th>
+      <td>10</td>
+      <td>130</td>
+      <td>140</td>
+    </tr>
+    <tr>
+      <th>Male</th>
+      <td>25</td>
+      <td>43</td>
+      <td>68</td>
+    </tr>
+    <tr>
+      <th>All</th>
+      <td>35</td>
+      <td>173</td>
+      <td>208</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Showing-row-percentages">Showing row percentages<a class="anchor-link" href="#Showing-row-percentages"> </a></h2><p>Typically, showing frequencies is less useful than relative frequencies.  Here, I am interested in the row percentages: what is the probability that a female is a manager versus the probability a male is a manager.</p>
+<p>We can get relative frequencies using the <code>normalize</code> argument. If <code>normalize  = True</code>, then we get the relative frequency in each cell relative to the total number of employees.  This is not very useful.  What we want instead is to normalize by row.  The parameter for this is: <code>normalize = 'index'</code>.  Why "index" instead of "row"?  Because each row has a row number (or index).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">conttab_relfreq</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span>
+    <span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">],</span>
+    <span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Manager&#39;</span><span class="p">],</span>
+    <span class="n">margins</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="s1">&#39;index&#39;</span>
+   <span class="p">)</span>
+<span class="n">conttab_relfreq</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Manager</th>
+      <th>mgmt</th>
+      <th>non-mgmt</th>
+    </tr>
+    <tr>
+      <th>Gender</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Female</th>
+      <td>0.071429</td>
+      <td>0.928571</td>
+    </tr>
+    <tr>
+      <th>Male</th>
+      <td>0.367647</td>
+      <td>0.632353</td>
+    </tr>
+    <tr>
+      <th>All</th>
+      <td>0.168269</td>
+      <td>0.831731</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here, each row sums to 100%.  Thus, for the total set of female employees, 7\% are managers and 94\% are non-managers.  For males, 37\% are managers and 63\% are non-managers.  The advantage of this presentation is that these percentages are directly comparable even though the majority (140/208) employees of the bank are female.</p>
+<h2 id="Chi-squared-test-of-independence">Chi-squared test of independence<a class="anchor-link" href="#Chi-squared-test-of-independence"> </a></h2><p>The row percentages leave us with the impression that managerial status <em>depends</em> on gender.  We can test this more formally using the $\chi^2$ (/ˈkaɪ skweə(r)) test of independence.</p>
+<p>Scipy has a method called <code>chi2_contingency()</code> that takes a contingency table of observed frequencies as input. Note that this table cannot include marginal totals or marginal frequencies.  Instead, it must consist of <em>m</em> x <em>n</em> observations:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">contab_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span>
+    <span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">],</span>
+    <span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Manager&#39;</span><span class="p">],</span>
+    <span class="n">margins</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">chi</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2_contingency</span><span class="p">(</span><span class="n">contab_obs</span><span class="p">)</span>
+<span class="n">chi</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(26.617776266575998,
+ 2.479518719230249e-07,
+ 1,
+ array([[ 23.55769231, 116.44230769],
+        [ 11.44230769,  56.55769231]]))</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The output of the <code>chi2_contingency()</code> method is not particularly attractive but it contains what we need:</p>
+<ol>
+<li>The first line is the $\chi^2$ statistic, which we can safely ignore</li>
+<li>The second line is the probability of getting a $\chi^2$ statistic that large <em>if</em> the two variables are independent. This <em>p</em>-value is very small ($10^{-7}$) so we conclude there is almost zero chance that gender and managerial status are independent at this bank.</li>
+<li>The third line is the degrees of freedom, which we can safely ignore.</li>
+<li>The remainder of the output is a matrix showing the <em>expected</em> frequencies under the assumption in independence.  These expected values are quite different from the observed values above.</li>
+</ol>
+<p>You may notice that the $\chi^2$ statistic and <em>p</em>-value are different from those provided by R.  This is because scipy defaults to the "Pearson's Chi-squared test with Yates' continuity correction" version of the test.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
+            </div>
+            <div class="c-textbook__footer" id="textbook_footer">
+              
+<nav class="c-page__nav">
+  
+    
+    
+
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/~mjbrydon/tutorials/BAinPy/06_t-test.html">
+      〈 <span class="u-margin-right-tiny"></span> Gap Analysis Using t-Tests
+    </a>
+  
+
+  
+    
+
+    
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/~mjbrydon/tutorials/BAinPy/08_correlation.html">
+      Correlation and Scatterplots <span class="u-margin-right-tiny"></span> 〉
+    </a>
+  
+</nav>
+
+              <footer>
+  <p class="footer"></p>
+</footer>
+
+            </div>
+
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

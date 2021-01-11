@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+
+  <title>Importing Data</title>
+  <meta name="description" content="        Importing Data    One of the most magical things about R is its ability to handle matrices of data using the data frame object (or tibble in the Tidy...">
+
+  <link rel="canonical" href="http://localhost:4000/~mjbrydon/tutorials/BAinPy/02_data.html">
+  <link rel="alternate" type="application/rss+xml" title="Basic Analytics in Python" href="http://localhost:4000/~mjbrydon/tutorials/BAinPy/feed.xml">
+
+  <meta property="og:url"         content="http://localhost:4000/~mjbrydon/tutorials/BAinPy/02_data.html" />
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="Importing Data" />
+<meta property="og:description" content="        Importing Data    One of the most magical things about R is its ability to handle matrices of data using the data frame object (or tibble in the Tidy..." />
+<meta property="og:image"       content="" />
+
+<meta name="twitter:card" content="summary">
+
+
+  <script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": "http://localhost:4000/~mjbrydon/tutorials/BAinPy/02_data.html",
+  "headline": "Importing Data",
+  "datePublished": "2020-09-09T12:13:08-07:00",
+  "dateModified": "2020-09-09T12:13:08-07:00",
+  "description": "        Importing Data    One of the most magical things about R is its ability to handle matrices of data using the data frame object (or tibble in the Tidy...",
+  "author": {
+    "@type": "Person",
+    "name": "Michael Brydon"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Data 100 at UC Berkeley",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy",
+      "width": 60,
+      "height": 60
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "http://localhost:4000/~mjbrydon/tutorials/BAinPy",
+    "height": 60,
+    "width": 60
+  }
+}
+
+  </script>
+  <link rel="stylesheet" href="/~mjbrydon/tutorials/BAinPy/assets/css/styles.css">
+
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#efae0a"> -->
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#233947">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="">
+
+  <!-- MathJax Config -->
+  <!-- Allow inline math using $ and automatically break long math lines -->
+<!-- (mostly) copied from nbconvert configuration -->
+<!-- https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/mathjax.tpl -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    // Center justify equations in code and markdown cells. Elsewhere
+    // we use CSS to left justify single line equations in code cells.
+    displayAlign: 'center',
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}},
+        linebreaks: { automatic: true },
+    },
+    
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML' async></script>
+
+
+  <!-- DOM updating function -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/dom-update.js"></script>
+
+  <!-- Selectors for elements on the page -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/documentSelectors.js"></script>
+
+  <!-- Define some javascript variables that will be useful in other javascript -->
+  <script>
+    const site_basename = '/~mjbrydon/tutorials/BAinPy';
+  </script>
+
+  <!-- Add AnchorJS to let headers be linked -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" async></script>
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/anchors.js" async></script>
+
+  <!-- Include Turbolinks to make page loads fast -->
+  <!-- https://github.com/turbolinks/turbolinks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js" async></script>
+  <meta name="turbolinks-cache-control" content="no-cache">
+
+  <!-- Load nbinteract for widgets -->
+  
+
+  <!-- Load Thebelab for interactive widgets -->
+  <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+
+  <!-- Load the auto-generating TOC (non-async otherwise the TOC won't load w/ turbolinks) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js" async></script>
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/tocbot.js"></script>
+
+  <!-- Google analytics -->
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-163030947-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-163030947-2');
+</script>
+
+
+
+  <!-- Clipboard copy button -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script>
+
+  <!-- Load custom website scripts -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/scripts.js" async></script>
+
+  <!-- Load custom user CSS and JS  -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/custom/custom.js" async></script>
+  <link rel="stylesheet" href="/~mjbrydon/tutorials/BAinPy/assets/custom/custom.css">
+
+  <!-- Update interact links w/ REST param, is defined in includes so we can use templates -->
+  
+
+  <!-- Lunr search code - will only be executed on the /search page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js" async></script>
+  <script>var initQuery = function() {
+  // See if we have a search box
+  var searchInput = document.querySelector('input#lunr_search');
+  if (searchInput === null) {
+    return;
+  }
+
+  // Function to parse our lunr cache
+  var idx = lunr(function () {
+    this.field('title')
+    this.field('excerpt')
+    this.field('categories')
+    this.field('tags')
+    this.ref('id')
+
+    this.pipeline.remove(lunr.trimmer)
+
+    for (var item in store) {
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        categories: store[item].categories,
+        tags: store[item].tags,
+        id: item
+      })
+    }
+  });
+
+  // Run search upon keyup
+  searchInput.addEventListener('keyup', function () {
+    var resultdiv = document.querySelector('#results');
+    var query = document.querySelector("input#lunr_search").value.toLowerCase();
+    var result =
+      idx.query(function (q) {
+        query.split(lunr.tokenizer.separator).forEach(function (term) {
+          q.term(term, { boost: 100 })
+          if(query.lastIndexOf(" ") != query.length-1){
+            q.term(term, {  usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
+          }
+          if (term != ""){
+            q.term(term, {  usePipeline: false, editDistance: 1, boost: 1 })
+          }
+        })
+      });
+
+      // Empty the results div
+      while (resultdiv.firstChild) {
+        resultdiv.removeChild(resultdiv.firstChild);
+      }
+
+    resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">'+result.length+' Result(s) found</p>');
+    for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+    	  var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
+    }
+  });
+};
+
+initFunction(initQuery);
+</script>
+
+  <!-- Load JS that depends on site variables -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/copy-button.js" async></script>
+
+  <!-- Hide cell code -->
+  <script src="/~mjbrydon/tutorials/BAinPy/assets/js/page/hide-cell.js" async></script>
+
+  <!-- Printing the screen -->
+  <!-- Include nbinteract for interactive widgets -->
+<script src="https://printjs-4de6.kxcdn.com/print.min.js" async></script>
+<script>
+printContent = () => {
+    // MathJax displays a second version of any math for assistive devices etc.
+    // This prevents double-rendering in the PDF output.
+    var ignoreAssistList = [];
+    assistives = document.querySelectorAll('.MathJax_Display span.MJX_Assistive_MathML').forEach((element, index) => {
+        var thisId = 'MathJax-assistive-' + index.toString();
+        element.setAttribute('id', thisId);
+        ignoreAssistList.push(thisId)
+    });
+
+    // Print the actual content object
+    printJS({
+        printable: 'textbook_content',
+        type: 'html',
+        css: "/~mjbrydon/tutorials/BAinPy/assets/css/styles.css",
+        style: "#textbook_content {padding-top: 40px};",
+        scanStyles: false,
+        targetStyles: ["*"],
+        ignoreElements: ignoreAssistList,
+        documentTitle: ""
+    })
+};
+
+initPrint = () => {
+    document.querySelector('#interact-button-print').addEventListener('click', printContent)
+}
+
+initFunction(initPrint)
+</script>
+
+</head>
+
+  <body>
+    <!-- Include the ThebeLab config so it gets reloaded on each page -->
+    <script type="text/x-thebe-config">{
+    requestKernel: true,
+    binderOptions: {
+    repo: "YOUR-ORG/YOUR-REPO",
+    ref: "gh-pages",
+    },
+    codeMirrorConfig: {
+    theme: "abcdef",
+    mode: "python"
+    },
+    kernelOptions: {
+    kernelName: "python3",
+    path: "content"
+    }
+}
+</script>
+
+    <!-- .js-show-sidebar shows sidebar by default -->
+    <div id="js-textbook" class="c-textbook js-show-sidebar">
+      
+
+
+
+<nav id="js-sidebar" class="c-textbook__sidebar">
+  
+  <h2 class="c-sidebar__title">Basic Analytics in Python</h2>
+  <ul class="c-sidebar__chapters">
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/01_intro">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/01_intro.html"
+        >
+          
+            1.
+          
+          Introduction to Python for Data Analysis
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/02_data">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/02_data.html"
+        >
+          
+            2.
+          
+          Importing Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/03_visualization">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/03_visualization.html"
+        >
+          
+            3.
+          
+          Basic Visualization
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/04_filter">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/04_filter.html"
+        >
+          
+            4.
+          
+          Filtering Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/05_recode">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/05_recode.html"
+        >
+          
+            5.
+          
+          Recoding Data
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/06_t-test">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/06_t-test.html"
+        >
+          
+            6.
+          
+          Gap Analysis Using t-Tests
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/07_contingency">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/07_contingency.html"
+        >
+          
+            7.
+          
+          Gap Analysis with Categorical Variables
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/08_correlation">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/08_correlation.html"
+        >
+          
+            8.
+          
+          Correlation and Scatterplots
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/09_regression">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/09_regression.html"
+        >
+          
+            9.
+          
+          Simple Linear Regression
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter" data-url="/10_multiple_regression">
+        <a class="c-sidebar__entry"
+          href="/~mjbrydon/tutorials/BAinPy/10_multiple_regression.html"
+        >
+          
+            10.
+          
+          Multiple Linear Regression
+        </a>
+      </li>
+
+      
+      
+
+      
+
+      
+      
+
+      
+
+      
+    
+  </ul>
+  <p class="sidebar_footer"></p>
+</nav>
+
+      
+      <div class="c-topbar" id="top-navbar">
+  <!-- We show the sidebar by default so we use .is-active -->
+  <div class="c-topbar__buttons">
+    <button
+      id="js-sidebar-toggle"
+      class="hamburger hamburger--arrowalt is-active"
+    >
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+    <div class="buttons">
+<div class="download-buttons-dropdown">
+    <button id="dropdown-button-trigger" class="interact-button"><img src="/~mjbrydon/tutorials/BAinPy/assets/images/download-solid.svg" alt="Download" /></button>
+    <div class="download-buttons">
+        <a href="/~mjbrydon/tutorials/BAinPy/content/02_data.ipynb" download>
+        <button id="interact-button-download" class="interact-button">.ipynb</button>
+        </a>
+        
+        <a id="interact-button-print"><button id="interact-button-download" class="interact-button">.pdf</button></a>
+    </div>
+</div>
+
+
+  
+  
+  
+  
+
+
+</div>
+
+  </div>
+  <!-- Empty sidebar placeholder that we'll auto-fill with javascript -->
+  <aside class="sidebar__right">
+    <header><h4 class="nav__title"><img src="/~mjbrydon/tutorials/BAinPy/assets/images/list-solid.svg" alt="Search" />   On this page</h4></header>
+    <nav class="onthispage">
+    </nav>
+  </aside>
+  <a href="/~mjbrydon/tutorials/BAinPy/search.html" class="topbar-right-button" id="search-button">
+    <img src="/~mjbrydon/tutorials/BAinPy/assets/images/search-solid.svg" alt="Search" />
+  </a>
+</div>
+
+      <main class="c-textbook__page" tabindex="-1">
+            <div class="c-textbook__content" id="textbook_content">
+                  <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Importing Data</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One of the most magical things about R is its ability to handle matrices of data using the data frame object (or tibble in the Tidyverse). The <code>pandas</code> library gives Python much the same functionality.</p>
+<p>Recall that a data frame is an object consisting of rows and columns (just like a spreadsheet or database table). In addition to storing the data, the data frame object also has useful properties and methods that can be accessed through code.  Thus, the first step in data analysis is load data from a file into a data frame object.</p>
+<h2 id="Loading-the-Pandas-library">Loading the Pandas library<a class="anchor-link" href="#Loading-the-Pandas-library"> </a></h2><p>A Python library contains things (objects, code) that is not part of the core Python language but is nonetheless useful to some community of users.  Libraries save us from re-inventing the wheel: Once someone has created a library and made it available for download, we can use the contents of the library in our own Python programs.</p>
+<p>For example, to use the <code>pandas.DataFrame</code> object in our programs, we must first import the Pandas library into our environment.</p>
+<p>Start by creating a new notebook in Jupyter and moving to the first cell:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is now possible to directly reference <code>pandas.DataFrame</code> in my scripts and Jupyter will know what I am talking about.  Note, however, that programmers are lazy, and typing the word "pandas" over and over again is seen as an unnecessary burden.  As such, programmers typically <em>alias</em> the library when they import it:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here, "pd" is the alias for "pandas". So I can write <code>pd.DataFrame</code> in my code rather than <code>pandas.DataFrame</code>.  Not sure what I will do with all the time I save.</p>
+<p>Finally, if I plan to use the DataFrame object frequently in my code, I can call it out by name using the <code>from</code> keyword:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now I can type <code>DataFrame</code> rather than <code>pd.DataFrame</code>.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Creating-a-DataFrame-object">Creating a DataFrame object<a class="anchor-link" href="#Creating-a-DataFrame-object"> </a></h2><p>Python is an object-orient programming language.  You create an <em>instance</em> of an <em>object</em> by calling its <em>constructor</em>, typically with some arguments.</p>
+<p>To illustrate, let's create a data frame called "bank" that contains data from a CSV file stored on my computer in the "Data" folder.  To do this, we call Panda's <code>read_csv</code> method:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bank</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;Data/Bank.csv&#39;</span><span class="p">)</span>
+<span class="n">bank</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Employee</th>
+      <th>EducLev</th>
+      <th>JobGrade</th>
+      <th>YrHired</th>
+      <th>YrBorn</th>
+      <th>Gender</th>
+      <th>YrsPrior</th>
+      <th>PCJob</th>
+      <th>Salary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>92</td>
+      <td>69</td>
+      <td>Male</td>
+      <td>1</td>
+      <td>No</td>
+      <td>32.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>81</td>
+      <td>57</td>
+      <td>Female</td>
+      <td>1</td>
+      <td>No</td>
+      <td>39.1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>83</td>
+      <td>60</td>
+      <td>Female</td>
+      <td>0</td>
+      <td>No</td>
+      <td>33.2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>2</td>
+      <td>1</td>
+      <td>87</td>
+      <td>55</td>
+      <td>Female</td>
+      <td>7</td>
+      <td>No</td>
+      <td>30.6</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>3</td>
+      <td>1</td>
+      <td>92</td>
+      <td>67</td>
+      <td>Male</td>
+      <td>0</td>
+      <td>No</td>
+      <td>29.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that the <code>head(n)</code> method can be called on the new DataFrame <code>bank</code>. Head simply prints out the first <em>n</em> rows of the data frame so you can see if it imported okay.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="alert alert-block alert-info">
+    <B>Hint:</B>
+    Pointing to a file on your computer is always tricky when you don't have a pop-up file system chooser like you do in most Windows applications. Some basic hints:
+<OL>
+    <LI>If practical, put the data file in the same folder as your Jupyter notebook.  In the example above, I created a subfolder called "Data" and put the bank data there.  This makes it easier for you to remember (and type) the path to the data file.</LI>
+    <LI>If your data must reside somewhere else on your computer or network: Be very careful when typing.  Cut and paste the path from Windows Explorer if required.</LI>
+    <LI>Beware the slashes/backslashes. Unix-like operating systems seperate directory names with a slash "/" whereas Microsoft Windows uses a backslash "\". In general, Python seperates folders with forward slashes.  The backward slash is used in Python as the 'escape' character.  If you cut and paste from Windows Explorer, you must either change all the backslashes to slashes or add the "r" prefix to your pathname to indicate a "raw" string of text (Python will ingore the special meaning of backslashes).  So the following should work for a more complex file location:
+    <OL>
+        <LI><code>pd.read_csv('C:/Users/Michael Brydon/Data/Bank.csv")</code> &mdash; all forward slashes</LI>
+        <LI><code>pd.read_csv(r'C:\Users\Michael Brydon\Data/Bank.csv")</code> &mdash; mixture of slashes and backslashes with the "r" prefix</LI>
+     </OL>
+</OL>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Creating-a-DataFrame-object-from-an-Excel-file">Creating a DataFrame object from an Excel file<a class="anchor-link" href="#Creating-a-DataFrame-object-from-an-Excel-file"> </a></h2><p>The Pandas library supports importing from many different data sources, including CSV, Excel, JSON, or even direct database access over a network.</p>
+<p>Here we use <code>read_excel</code> instead of <code>read_csv</code>.  It is the same data, but in a different file format on my computer:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bankxl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;Data/Bank.xlsx&#39;</span><span class="p">)</span>
+<span class="n">bankxl</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Employee</th>
+      <th>EducLev</th>
+      <th>JobGrade</th>
+      <th>YrHired</th>
+      <th>YrBorn</th>
+      <th>Gender</th>
+      <th>YrsPrior</th>
+      <th>PCJob</th>
+      <th>Salary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>92</td>
+      <td>69</td>
+      <td>Male</td>
+      <td>1</td>
+      <td>No</td>
+      <td>32.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>81</td>
+      <td>57</td>
+      <td>Female</td>
+      <td>1</td>
+      <td>No</td>
+      <td>39.1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>83</td>
+      <td>60</td>
+      <td>Female</td>
+      <td>0</td>
+      <td>No</td>
+      <td>33.2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>2</td>
+      <td>1</td>
+      <td>87</td>
+      <td>55</td>
+      <td>Female</td>
+      <td>7</td>
+      <td>No</td>
+      <td>30.6</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>3</td>
+      <td>1</td>
+      <td>92</td>
+      <td>67</td>
+      <td>Male</td>
+      <td>0</td>
+      <td>No</td>
+      <td>29.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Running <code>head()</code> after importing is a good idea just to make sure you imported what you think you imported.  If not, you will have to either:</p>
+<ul>
+<li>edit your source file (Excel) to make sure it has the necessary tabular structure (with the first row as headings, and so on)</li>
+<li>add arguments to your <code>read_...</code> method to make sure you are starting at the correct row, reading the correct spreadsheet, and so on.</li>
+</ul>
+<p>Here is where Google-ing and learning Python go hand in hand.  If worst comes to worst, read <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_excel.html">the documentation</a></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Confirming-data-frame-properties">Confirming data frame properties<a class="anchor-link" href="#Confirming-data-frame-properties"> </a></h2><p>As noted previously, objects in Python expose useful properties and methods.  For example, we can confirm the size of the <code>bank</code> data frame with the <code>shape</code> property, which gives us the number of rows (209) and columns (9):</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bank</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(208, 9)</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can use the <code>describe()</code> method to generate some summary statistics:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bank</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Employee</th>
+      <th>EducLev</th>
+      <th>JobGrade</th>
+      <th>YrHired</th>
+      <th>YrBorn</th>
+      <th>YrsPrior</th>
+      <th>Salary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>208.000000</td>
+      <td>208.000000</td>
+      <td>208.000000</td>
+      <td>208.000000</td>
+      <td>208.000000</td>
+      <td>208.000000</td>
+      <td>208.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>104.500000</td>
+      <td>3.158654</td>
+      <td>2.759615</td>
+      <td>85.326923</td>
+      <td>54.605769</td>
+      <td>2.375000</td>
+      <td>39.921923</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>60.188592</td>
+      <td>1.467464</td>
+      <td>1.566529</td>
+      <td>6.987832</td>
+      <td>10.318988</td>
+      <td>3.135237</td>
+      <td>11.256154</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>56.000000</td>
+      <td>30.000000</td>
+      <td>0.000000</td>
+      <td>26.700000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>52.750000</td>
+      <td>2.000000</td>
+      <td>1.000000</td>
+      <td>82.000000</td>
+      <td>47.750000</td>
+      <td>0.000000</td>
+      <td>33.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>104.500000</td>
+      <td>3.000000</td>
+      <td>3.000000</td>
+      <td>87.000000</td>
+      <td>56.500000</td>
+      <td>1.000000</td>
+      <td>37.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>156.250000</td>
+      <td>5.000000</td>
+      <td>4.000000</td>
+      <td>90.000000</td>
+      <td>63.000000</td>
+      <td>4.000000</td>
+      <td>44.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>208.000000</td>
+      <td>5.000000</td>
+      <td>6.000000</td>
+      <td>93.000000</td>
+      <td>73.000000</td>
+      <td>18.000000</td>
+      <td>97.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First, notice the difference between a <em>property</em> like <code>shape</code> with no parentheses and a <em>method</em> like <code>describe()</code> with parentheses for passing arguments.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="alert alert-block alert-info">
+    <B>Hint:</B>
+     Press the Shift-Tab key while within the parantheses of a Python method for a list of the possible arguments.  Hit Shift-Tab twice to get more detailed help.
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Second, by default, the <code>describe()</code> method only summarizes the numerical columns. Recall that our data frame consists of nine columns.  To see the issue, run the <code>info()</code> method:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bank</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 208 entries, 0 to 207
+Data columns (total 9 columns):
+ #   Column    Non-Null Count  Dtype  
+---  ------    --------------  -----  
+ 0   Employee  208 non-null    int64  
+ 1   EducLev   208 non-null    int64  
+ 2   JobGrade  208 non-null    int64  
+ 3   YrHired   208 non-null    int64  
+ 4   YrBorn    208 non-null    int64  
+ 5   Gender    208 non-null    object 
+ 6   YrsPrior  208 non-null    int64  
+ 7   PCJob     208 non-null    object 
+ 8   Salary    208 non-null    float64
+dtypes: float64(1), int64(6), object(2)
+memory usage: 14.8+ KB
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we see the nine columns in the data frame listed by data type. Six are integer values, one (Salary) is a floating point number, and two (Gender, PCJob) are "Objects" (string objects):</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Converting-strings-to-categories">Converting strings to categories<a class="anchor-link" href="#Converting-strings-to-categories"> </a></h2><p>Recall in R that we made a distinction between <em>strings</em> (character data) like a person's name and <em>factors</em>, which look like strings but have a limited set of repeated values.  Color is a factor, for example, because it takes on a few known values like "red", "green", and "blue".  Similarly, a column called <code>car_brand</code> would be a factor because it would contain a finite number of string values, such as "Ford", "Tesla", "Ferarri".</p>
+<p>Pandas permits the same distinction, but instead uses the term <em>category</em> instead of <em>factor</em>.  This is telling: R uses the old statistical technical term "factor" whereas Pandas/Python uses the more straightforward term "category". This is the difference between the two languages in a nutshell.</p>
+<p>The process for replacing the two (string) "Object" columns with categories is similar to the one we used in R.  The key is understanding how to reference columns in Python.  Two possibilities:</p>
+<ul>
+<li>square bracket notation: <code>bank['Gender']</code></li>
+<li>dot notation: <code>bank.Gender</code></li>
+</ul>
+<p>Of these two, square bracket notation is slightly more flexible because it permits column names with spaces, e.g., <code>dataframe['column name']</code>.  The dot notation of this would fail because Python has no way of knowing what the space after "column" means: <code>dataframe.column name</code>.</p>
+<p>Once we know how to reference a column (or a "Series" in Pandas-speak), we can run the type conversion method and specify "category" as the output data type:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0        Male
+1      Female
+2      Female
+3      Female
+4        Male
+        ...  
+203      Male
+204      Male
+205      Male
+206      Male
+207    Female
+Name: Gender, Length: 208, dtype: category
+Categories (2, object): [Female, Male]</pre>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note at the bottom of the summary that the <code>Gender</code> category consists of two values: Female and Male.</p>
+<p>Of course, running the command above just lists the converted values; it does not do anything to the "bank" data frame. To <em>replace</em> the existing column in the data frame, we use the assignment operator:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bank</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<span class="n">bank</span><span class="p">[</span><span class="s1">&#39;PCJob&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bank</span><span class="p">[</span><span class="s1">&#39;PCJob&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can confirm the result by running the <code>describe()</code> method again, but this time using an argument to ensure we get only the categorical columns:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bank</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Gender</th>
+      <th>PCJob</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>208</td>
+      <td>208</td>
+    </tr>
+    <tr>
+      <th>unique</th>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>top</th>
+      <td>Female</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <th>freq</th>
+      <td>140</td>
+      <td>189</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This output tells us that we have 208 rows of data.  Both the "Gender" and "PCJob" columns have two unique categorical values and the most frequent are "Female" and "No" respectively. 140 of the 208 employees are female while 189/208 do not  have PC jobs.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Type-conversion-using-programming-constructs">Type conversion using programming constructs<a class="anchor-link" href="#Type-conversion-using-programming-constructs"> </a></h2><p>As an aside, it is possible to do the same type conversions <em>en masse</em> in Python using core programming constructs such as lists, iterators, and looping.  Specifically, for a larger data set with many columns, it might make sense to do the following:</p>
+<ol>
+<li>make a list of the columns to convert</li>
+<li>iterate through each column making the conversion assignment, as above</li>
+<li>loop through the values of the variable <code>col</code> until all the columns are converted</li>
+</ol>
+<p>Use of an iterated list is not really worth it in this case (two lines of code using either approach):</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">,</span> <span class="s1">&#39;PCJob&#39;</span><span class="p">]:</span>
+    <span class="n">bankxl</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">bankxl</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    
+<span class="n">bank</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 208 entries, 0 to 207
+Data columns (total 9 columns):
+ #   Column    Non-Null Count  Dtype   
+---  ------    --------------  -----   
+ 0   Employee  208 non-null    int64   
+ 1   EducLev   208 non-null    int64   
+ 2   JobGrade  208 non-null    int64   
+ 3   YrHired   208 non-null    int64   
+ 4   YrBorn    208 non-null    int64   
+ 5   Gender    208 non-null    category
+ 6   YrsPrior  208 non-null    int64   
+ 7   PCJob     208 non-null    category
+ 8   Salary    208 non-null    float64 
+dtypes: category(2), float64(1), int64(6)
+memory usage: 12.1 KB
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
+            </div>
+            <div class="c-textbook__footer" id="textbook_footer">
+              
+<nav class="c-page__nav">
+  
+    
+    
+
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/~mjbrydon/tutorials/BAinPy/01_intro.html">
+      〈 <span class="u-margin-right-tiny"></span> Introduction to Python for Data An...
+    </a>
+  
+
+  
+    
+
+    
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/~mjbrydon/tutorials/BAinPy/03_visualization.html">
+      Basic Visualization <span class="u-margin-right-tiny"></span> 〉
+    </a>
+  
+</nav>
+
+              <footer>
+  <p class="footer"></p>
+</footer>
+
+            </div>
+
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
